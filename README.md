@@ -1,81 +1,74 @@
-# TokenBoard
+# TokenBoard ⚡
 
-macOS 菜单栏小工具，实时监控千问 Token Plan 的 5h/7d 限额消耗情况。
+macOS 菜单栏实时监控**千问（Qwen）Token Plan** 额度消耗的轻量工具。5 小时 / 7 天滑动窗口的剩余额度一眼可见。
 
-## 功能
+![菜单栏效果](docs/screenshot-menubar.png)
 
-- 菜单栏实时显示最紧张限额的剩余百分比
-- 弹出面板展示 5h/7d 限额进度条、剩余次数、重置倒计时
-- 套餐信息（等级、状态、剩余天数、到期日期）
-- 加油包信息
-- 额度低于 20% 时系统通知预警
-- 凭证安全存储（macOS Keychain）
-- 可配置轮询间隔（15-300 秒）
-- 胶囊背景颜色可自定义（设置窗口实时生效）
-- 开机自启支持
-- 一键退出（弹出面板右下角电源按钮）
+## ✨ 功能
 
-## 系统要求
+- **菜单栏胶囊**：`QW` + 实时剩余百分比，剩余额度一目了然
+- **5h / 7d 滑动窗口**：剩余比例、剩余次数、重置倒计时
+- **套餐信息**：等级、状态、剩余天数、到期时间
+- **加油包**：剩余加油包信息
+- **额度预警**：剩余低于 20% 时发送系统通知
+- **自定义样式**：胶囊背景颜色可配置，实时生效
+- **安全存储**：Cookie 与 sec_token 存入 macOS Keychain
+- **一键退出**：弹出面板右下角电源按钮
 
-- macOS 13.0+
-- Xcode 15.0+
+## 📦 安装
 
-## 构建
+从 [Releases](https://github.com/icepoper/tokenboard/releases) 下载 `TokenBoard-0.1.0-universal.dmg`：
+
+1. 打开 DMG，把 TokenBoard 拖入 Applications
+2. **首次打开**（未签名应用）：右键点击 app → **打开**，或到 系统设置 → 隐私与安全性 → **仍要打开**
+3. 打开 app 后，菜单栏出现 TokenBoard 图标
+
+## 🚀 使用
+
+1. 点击菜单栏 TokenBoard 图标 → **设置**（⚙️）
+2. 从浏览器抓取凭证：
+   - 打开 [千问 Token Plan 页面](https://platform.qianwenai.com/home/billing/subscription/token-plan-individual)
+   - 按 `F12` → Network → 刷新页面 → 任选一个请求
+   - **Headers** 标签复制 `Cookie` 整行
+   - **Payload** 标签复制 `sec_token`
+3. 粘贴到设置窗口并保存，数据开始实时刷新
+
+## 🛠 开发
 
 ```bash
-# 1. 安装 xcodegen（如果还没有）
+# 生成 Xcode 项目（需 XcodeGen）
 brew install xcodegen
-
-# 2. 生成 Xcode 项目
 xcodegen generate
 
-# 3. 用 Xcode 打开并构建
-open TokenBoard.xcodeproj
-# 在 Xcode 中按 Cmd+R 运行
+# 构建
+xcodebuild -project TokenBoard.xcodeproj -scheme TokenBoard -configuration Release build
+
+# 打包 DMG
+hdiutil create -volname "TokenBoard" -srcfolder <app目录> -ov -format UDZO TokenBoard.dmg
 ```
 
-## 使用
+### 技术栈
 
-1. 启动应用后，菜单栏会出现 TokenBoard 图标
-2. 点击图标，在弹出面板中点击设置按钮
-3. 从浏览器 DevTools 复制 Cookie 和 sec_token：
-   - 打开 [千问 Token Plan 页面](https://platform.qianwenai.com/home/billing/subscription/token-plan-individual)
-   - F12 → Network → 刷新页面 → 点击任意请求 → Headers 标签复制 Cookie
-   - Payload 标签复制 sec_token
-4. 粘贴到设置窗口并保存
-5. 数据会自动开始刷新
+- Swift 5.9+ / SwiftUI
+- macOS 13.0+（Apple Silicon & Intel）
+- 零第三方依赖
 
-## 项目结构
+### 项目结构
 
 ```
 TokenBoard/
-├── TokenBoardApp.swift          # App 入口 + MenuBarExtra
-├── Models/
-│   ├── PlanData.swift           # 数据模型（套餐/用量/配额/加油包）
-│   ├── APIResponse.swift        # API 响应 Codable 解码
-│   └── APIError.swift           # 错误类型
-├── Services/
-│   ├── QianwenAPI.swift         # 千问 API 客户端（5 个接口）
-│   ├── PollingService.swift     # 后台轮询服务
-│   └── CredentialManager.swift  # 凭证管理
-├── Views/
-│   ├── MenuBarLabel.swift       # 菜单栏图标+文字
-│   ├── PopoverView.swift        # 弹出面板
-│   ├── QuotaBar.swift           # 限额进度条组件
-│   └── SettingsView.swift       # 设置窗口
-├── Utilities/
-│   ├── KeychainHelper.swift     # Keychain 安全存储
-│   └── NotificationHelper.swift # 系统通知
-└── TokenBoard.entitlements      # 网络权限
+├── TokenBoardApp.swift          # App 入口
+├── Models/                      # 数据模型
+├── Services/                    # API 客户端 / 轮询 / 状态栏
+├── Views/                       # 菜单栏 / 弹出面板 / 设置
+├── Utilities/                   # Keychain / 通知 / 设置
+└── Assets.xcassets              # 应用图标
 ```
 
-## 技术栈
+## ⚠️ 免责声明
 
-- Swift 5.9+ / SwiftUI
-- 零第三方依赖
-- XcodeGen 项目管理
-- OpenSpec 规格驱动开发
+本项目通过**逆向千问工作台内部 API** 获取数据，仅供个人学习使用。接口可能随时变更，作者不对数据准确性负责。请遵守阿里云服务条款，合理使用。
 
-## License
+## 📄 License
 
-MIT
+[MIT](LICENSE)
