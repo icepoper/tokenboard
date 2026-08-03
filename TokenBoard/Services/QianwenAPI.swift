@@ -1,0 +1,293 @@
+import Foundation
+
+/// 千问工作台 API 客户端
+/// 封装 5 个逆向接口的调用逻辑
+actor QianwenAPI {
+
+    // MARK: - 常量
+
+    private static let businessBaseURL = "https://cs-data.qianwenai.com/data/api.json"
+    private static let bssBaseURL = "https://platform-home.qianwenai.com/data/api.json"
+    private static let timeoutInterval: TimeInterval = 10
+
+    private static let cornerstoneParam: [String: String] = [
+        "domain": "platform.qianwenai.com",
+        "consoleSite": "QIANWENAI",
+        "console": "ONE_CONSOLE",
+        "xsp_lang": "zh-CN",
+        "protocol": "V2",
+        "productCode": "p_efm"
+    ]
+
+    private let session: URLSession
+
+    init() {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = Self.timeoutInterval
+        config.timeoutIntervalForResource = Self.timeoutInterval
+        self.session = URLSession(configuration: config)
+    }
+
+    // MARK: - 公开方法
+
+    /// 拉取所有数据（quota 依赖 subscription 返回的套餐等级）
+    func fetchAll(cookie: String, secToken: String) async throws -> PlanData {
+        async let subscriptionTask = fetchSubscription(cookie: cookie, secToken: secToken)
+        async let usageTask = fetchUsage(cookie: cookie, secToken: secToken)
+        async let cardsTask = fetchResetCards(cookie: cookie, secToken: secToken)
+
+        let (sub, use, cardList) = try await (subscriptionTask, usageTask, cardsTask)
+        let quota = try await fetchQuotaConfig(cookie: cookie, secToken: secToken, specCode: sub.specCode)
+        return PlanData(subscription: sub, usage: use, quota: quota, resetCards: cardList)
+    }
+
+    /// 获取套餐订阅信息
+    func fetchSubscription(cookie: String, secToken: String) async throws -> SubscriptionInfo {
+        let params: [String: Any] = [
+            "Api": "zeldaHttp.apikeyMgr./tokenplan/personal/api/v2/subscription",
+            "Data": [
+                "commodityCode": "sfm_tokenplansolo_public_cn",
+                "cornerstoneParam": Self.cornerstoneParam
+            ] as [String: Any],
+            "V": "1.0"
+        ]
+
+        let responseData: SubscriptionResponseData = try await callBusinessAPI(
+            api: "zeldaHttp.apikeyMgr.%2Ftokenplan%2Fpersonal%2Fapi%2Fv2%2Fsubscription",
+            params: params,
+            cookie: cookie,
+            secToken: secToken
+        )
+
+        guard let specCode = responseData.specCode,
+              let status = responseData.status,
+              let remainingDays = responseData.remainingDays,
+              let endTimeTs = responseData.endTime else {
+            throw APIError.parseError("subscription 响应字段缺失")
+        }
+
+        return SubscriptionInfo(
+            specCode: specCode,
+            status: status,
+            remainingDays: remainingDays,
+            endTime: Date(timeIntervalSince1970: endTimeTs / 1000),
+            autoRenewFlag: responseData.autoRenewFlag ?? false
+        )
+    }
+
+    /// 获取实时用量
+    func fetchUsage(cookie: String, secToken: String) async throws -> UsageInfo {
+        let params: [String: Any] = [
+            "Api": "zeldaHttp.apikeyMgr./tokenplan/personal/api/v2/usage",
+            "Data": ["cornerstoneParam": Self.cornerstoneParam] as [String: Any],
+            "V": "1.0"
+        ]
+
+        let responseData: UsageResponseData = try await callBusinessAPI(
+            api: "zeldaHttp.apikeyMgr.%2Ftokenplan%2Fpersonal%2Fapi%2Fv2%2Fusage",
+            params: params,
+            cookie: cookie,
+            secToken: secToken
+        )
+
+        guard let p5h = responseData.per5HourPercentage,
+              let p1w = responseData.per1WeekPercentage,
+              let p1wReset = responseData.per1WeekResetTime else {
+            throw APIError.parseError("usage 响应字段缺失")
+        }
+
+        // per5HourResetTime 可能缺失（5h 无消耗时 API 不返回该字段）
+        let p5hReset: Date? = responseData.per5HourResetTime.map { Date(timeIntervalSince1970: $0 / 1000) }
+
+        return UsageInfo(
+            per5HourPercentage: p5h,
+            per5HourResetTime: p5hReset,
+            per1WeekPercentage: p1w,
+            per1WeekResetTime: Date(timeIntervalSince1970: p1wReset / 1000)
+        )
+    }
+
+    /// 获取配额配置
+    func fetchQuotaConfig(cookie: String, secToken: String, specCode: String) async throws -> QuotaConfig {
+        let params: [String: Any] = [
+            "Api": "zeldaHttp.apikeyMgr./tokenplan/personal/api/v2/quota-config",
+            "Data": ["cornerstoneParam": Self.cornerstoneParam] as [String: Any],
+            "V": "1.0"
+        ]
+
+        let responseData: QuotaConfigResponseData = try await callBusinessAPI(
+            api: "zeldaHttp.apikeyMgr.%2Ftokenplan%2Fpersonal%2Fapi%2Fv2%2Fquota-config",
+            params: params,
+            cookie: cookie,
+            secToken: secToken
+        )
+
+        let tier: QuotaConfigResponseData.QuotaTier?
+        switch specCode {
+        case "standard": tier = responseData.standard
+        case "pro": tier = responseData.pro
+        case "lite": tier = responseData.lite
+        default: tier = responseData.standard
+        }
+
+        guard let t = tier else {
+            throw APIError.parseError("quota-config 中未找到 \(specCode) 等级")
+        }
+
+        return QuotaConfig(
+            fiveHour: t.five_hour ?? 3000,
+            weekly: t.weekly ?? 10000
+        )
+    }
+
+    /// 获取加油包列表
+    func fetchResetCards(cookie: String, secToken: String) async throws -> [ResetCard] {
+        let params: [String: Any] = [
+            "Api": "zeldaHttp.apikeyMgr./tokenplan/personal/api/v2/reset-card/list",
+            "Data": ["cornerstoneParam": Self.cornerstoneParam] as [String: Any],
+            "V": "1.0"
+        ]
+
+        // reset-card 返回的 data 是数组，需要特殊处理
+        let url = URL(string: Self.businessBaseURL + "?product=sfm_bailian&action=BroadScopeAspnGateway&api=zeldaHttp.apikeyMgr.%2Ftokenplan%2Fpersonal%2Fapi%2Fv2%2Freset-card%2Flist")!
+        let request = try buildRequest(url: url, params: params, cookie: cookie, secToken: secToken)
+
+        let (data, response) = try await session.data(for: request)
+        try validateHTTPResponse(response)
+
+        // 解析外层结构
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        guard let outerData = json?["data"] as? [String: Any],
+              let dataV2 = outerData["DataV2"] as? [String: Any],
+              let innerData = dataV2["data"] as? [String: Any],
+              let code = innerData["code"] as? String, code == "SUCCESS" else {
+            // 检查认证错误
+            if let outerData = json?["data"] as? [String: Any],
+               let dataV2 = outerData["DataV2"] as? [String: Any],
+               let ret = dataV2["ret"] as? [String],
+               ret.first?.contains("FAIL") == true {
+                throw APIError.authExpired
+            }
+            return []
+        }
+
+        // data 字段是数组
+        guard let cardArray = innerData["data"] as? [[String: Any]] else {
+            return []
+        }
+
+        return cardArray.enumerated().map { idx, card in
+            ResetCard(
+                id: card["id"] as? String ?? "\(idx)",
+                quota: card["quota"] as? Double ?? 0,
+                status: card["status"] as? String ?? ""
+            )
+        }
+    }
+
+    // MARK: - 内部方法
+
+    /// 通用业务 API 调用
+    private func callBusinessAPI<T: Decodable>(
+        api: String,
+        params: [String: Any],
+        cookie: String,
+        secToken: String
+    ) async throws -> T {
+        let url = URL(string: Self.businessBaseURL + "?product=sfm_bailian&action=BroadScopeAspnGateway&api=\(api)")!
+        let request = try buildRequest(url: url, params: params, cookie: cookie, secToken: secToken)
+
+        let (data, response) = try await session.data(for: request)
+        try validateHTTPResponse(response)
+
+        return try parseBusinessResponse(data)
+    }
+
+    /// 构造 POST 请求
+    private func buildRequest(
+        url: URL,
+        params: [String: Any],
+        cookie: String,
+        secToken: String
+    ) throws -> URLRequest {
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.setValue(cookie, forHTTPHeaderField: "Cookie")
+        request.setValue("https://platform.qianwenai.com", forHTTPHeaderField: "Origin")
+        request.setValue("https://platform.qianwenai.com/home/billing/subscription/token-plan-individual", forHTTPHeaderField: "Referer")
+
+        // 构造 form body
+        var formFields: [String] = []
+        formFields.append("product=\(url.queryValue(for: "product") ?? "sfm_bailian")")
+        formFields.append("action=\(url.queryValue(for: "action") ?? "BroadScopeAspnGateway")")
+        formFields.append("sec_token=\(secToken.urlEncoded)")
+        formFields.append("region=cn-beijing")
+
+        let paramsJSON = try JSONSerialization.data(withJSONObject: params)
+        let paramsString = String(data: paramsJSON, encoding: .utf8) ?? "{}"
+        formFields.append("params=\(paramsString.urlEncoded)")
+
+        request.httpBody = formFields.joined(separator: "&").data(using: .utf8)
+        return request
+    }
+
+    /// 校验 HTTP 响应
+    private func validateHTTPResponse(_ response: URLResponse) throws {
+        guard let http = response as? HTTPURLResponse else {
+            throw APIError.unknown("非 HTTP 响应")
+        }
+        if http.statusCode == 401 || http.statusCode == 403 {
+            throw APIError.authExpired
+        }
+        guard (200...299).contains(http.statusCode) else {
+            throw APIError.httpError(statusCode: http.statusCode)
+        }
+    }
+
+    /// 解析业务 API 响应（嵌套 JSON 结构）
+    private func parseBusinessResponse<T: Decodable>(_ data: Data) throws -> T {
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+
+        // 检查认证错误
+        if let outerData = json?["data"] as? [String: Any],
+           let dataV2 = outerData["DataV2"] as? [String: Any],
+           let ret = dataV2["ret"] as? [String],
+           let firstRet = ret.first,
+           firstRet.contains("FAIL_SYS_SESSION_EXPIRED") || firstRet.contains("FAIL_SYS_TOKEN_EXOIRED") {
+            throw APIError.authExpired
+        }
+
+        // 提取 data.DataV2.data.data
+        guard let outerData = json?["data"] as? [String: Any],
+              let dataV2 = outerData["DataV2"] as? [String: Any],
+              let innerWrapper = dataV2["data"] as? [String: Any],
+              let code = innerWrapper["code"] as? String,
+              code == "SUCCESS",
+              let innerData = innerWrapper["data"] else {
+            let errorMsg = (json?["data"] as? [String: Any])?["errorMsg"] as? String ?? "未知错误"
+            throw APIError.parseError(errorMsg)
+        }
+
+        // 将 innerData 重新序列化为 Data 再解码
+        let innerDataBytes = try JSONSerialization.data(withJSONObject: innerData)
+        return try JSONDecoder().decode(T.self, from: innerDataBytes)
+    }
+}
+
+// MARK: - 辅助扩展
+
+private extension URL {
+    func queryValue(for key: String) -> String? {
+        URLComponents(url: self, resolvingAgainstBaseURL: false)?
+            .queryItems?
+            .first(where: { $0.name == key })?
+            .value
+    }
+}
+
+private extension String {
+    var urlEncoded: String {
+        addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? self
+    }
+}

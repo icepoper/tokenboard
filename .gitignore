@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# OpenSpec
+openspec/.openspec.yaml
+
+# 其他
+*.log

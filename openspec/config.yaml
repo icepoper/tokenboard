@@ -1,0 +1,21 @@
+schema: spec-driven
+
+context: |
+  项目: TokenBoard — macOS 菜单栏千问 Token Plan 实时监控工具
+  技术栈: Swift 5.9+, SwiftUI, macOS 13+
+  构建: XcodeGen (project.yml) → Xcode
+  架构: MVVM，单 Target
+  依赖: 零第三方依赖，纯 Apple 框架
+  约定:
+    - 代码注释使用中文
+    - UI 不使用 emoji 作为图标，使用 SF Symbols
+    - 文件按 Models/Services/Views/Utilities 分层
+    - 异步使用 async/await，数据流使用 Combine @Published
+
+rules:
+  proposal:
+    - 保持简洁，1-2 页
+  design:
+    - 每个决策必须包含替代方案
+  tasks:
+    - 每个任务应可在一次会话内完成
