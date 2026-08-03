@@ -3,7 +3,11 @@
 
 # Xcode
 build/
+build-release/
 DerivedData/
+
+# 发布产物
+*.dmg
 *.xcuserstate
 xcuserdata/
 
