@@ -30,10 +30,10 @@ struct QuotaBar: View {
                         .fill(Color.secondary.opacity(0.15))
                         .frame(height: 8)
 
-                    // 已用填充
+                    // 剩余填充（与千问工作台一致：条 = 剩余比例）
                     RoundedRectangle(cornerRadius: 4)
                         .fill(barColor)
-                        .frame(width: max(geo.size.width * usedPercentage, 4), height: 8)
+                        .frame(width: max(geo.size.width * (1 - usedPercentage), 4), height: 8)
                 }
             }
             .frame(height: 8)

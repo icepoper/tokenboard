@@ -48,9 +48,9 @@ final class StatusItemController: NSObject {
         )
     }
 
-    /// 用最宽可能内容（"QW 100%"）测量状态项宽度，数值变化时宽度不跳动
+    /// 用最宽可能内容（"QW 100% | 100%"）测量状态项宽度，数值变化时宽度不跳动
     private static func idealItemWidth() -> CGFloat {
-        let probe = NSHostingView(rootView: ProgressRing(progress: 1, text: "100%"))
+        let probe = NSHostingView(rootView: ProgressRing(progress: 1, text: "100% | 100%"))
         return ceil(probe.fittingSize.width)
     }
 

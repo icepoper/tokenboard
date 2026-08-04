@@ -35,8 +35,8 @@ struct MenuBarLabel: View {
             return "!"
         case .complete:
             if hasError { return "!" }
-            guard let data = polling.planData else { return "--" }
-            return "\(Int(data.minRemainingPercentage * 100))%"
+            guard let data = polling.planData else { return "-- | --" }
+            return data.remainingPercentText
         }
     }
 }

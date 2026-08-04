@@ -105,6 +105,11 @@ struct PlanData {
         min(usage.per5HourRemaining, usage.per1WeekRemaining)
     }
 
+    /// 菜单栏胶囊文案：5h 剩余 | 7d 剩余
+    var remainingPercentText: String {
+        "\(Int(usage.per5HourRemaining * 100))% | \(Int(usage.per1WeekRemaining * 100))%"
+    }
+
     /// 格式化倒计时
     static func formatCountdown(to date: Date) -> String {
         let interval = date.timeIntervalSinceNow

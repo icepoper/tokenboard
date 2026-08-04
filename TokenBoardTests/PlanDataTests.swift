@@ -41,5 +41,22 @@ final class PlanDataTests: XCTestCase {
         XCTAssertEqual(data.fiveHourRemainingCount, 1500)
         XCTAssertEqual(data.weeklyRemainingCount, 7500)
         XCTAssertEqual(data.minRemainingPercentage, 0.5)
+        XCTAssertEqual(data.remainingPercentText, "50% | 75%")
+    }
+
+    func testRemainingPercentTextFull() {
+        let usage = UsageInfo(
+            per5HourPercentage: 0,
+            per5HourResetTime: nil,
+            per1WeekPercentage: 0,
+            per1WeekResetTime: Date()
+        )
+        let data = PlanData(
+            subscription: SubscriptionInfo(specCode: "pro", status: "VALID", remainingDays: 30, endTime: Date(), autoRenewFlag: true),
+            usage: usage,
+            quota: QuotaConfig(fiveHour: 3000, weekly: 10000),
+            resetCards: []
+        )
+        XCTAssertEqual(data.remainingPercentText, "100% | 100%")
     }
 }
