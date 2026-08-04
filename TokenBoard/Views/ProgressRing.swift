@@ -23,7 +23,7 @@ struct ProgressRing: View {
             .font(.system(size: 10, weight: .bold, design: .rounded))
             .monospacedDigit()
             .foregroundColor(.white)
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 6)
             .padding(.vertical, 3)
             .background(
                 Capsule()

@@ -16,3 +16,6 @@ openspec/.openspec.yaml
 
 # 其他
 *.log
+
+# 覆盖率产物
+*.profraw

@@ -11,9 +11,15 @@ struct MenuBarLabel: View {
 
     // MARK: - 状态计算
 
+    /// 持续失败（连接异常）时菜单栏显示 "!"，不再假装数据正常
+    private var hasError: Bool {
+        polling.isFailing || polling.state == .error
+    }
+
     private var ringProgress: Double {
         switch credentials.status {
         case .complete:
+            if hasError { return 0 }
             guard let data = polling.planData else { return 0 }
             return max(0, min(data.minRemainingPercentage, 1))
         case .incomplete, .expired:
@@ -28,6 +34,7 @@ struct MenuBarLabel: View {
         case .expired:
             return "!"
         case .complete:
+            if hasError { return "!" }
             guard let data = polling.planData else { return "--" }
             return "\(Int(data.minRemainingPercentage * 100))%"
         }

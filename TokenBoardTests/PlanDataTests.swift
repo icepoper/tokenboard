@@ -1,0 +1,45 @@
+import XCTest
+@testable import TokenBoard
+
+/// 数据模型展示逻辑测试
+final class PlanDataTests: XCTestCase {
+
+    func testCountdownPastDateShowsReset() {
+        let past = Date().addingTimeInterval(-60)
+        XCTAssertEqual(PlanData.formatCountdown(to: past), "已重置")
+    }
+
+    func testCountdownMinutes() {
+        let t = Date().addingTimeInterval(30 * 60 + 30)
+        XCTAssertEqual(PlanData.formatCountdown(to: t), "30分钟")
+    }
+
+    func testCountdownHoursAndMinutes() {
+        let t = Date().addingTimeInterval(4 * 3600 + 50 * 60 + 30)
+        XCTAssertEqual(PlanData.formatCountdown(to: t), "4小时50分钟")
+    }
+
+    func testCountdownDays() {
+        let t = Date().addingTimeInterval(2 * 24 * 3600 + 3 * 3600 + 30)
+        XCTAssertEqual(PlanData.formatCountdown(to: t), "2天3小时")
+    }
+
+    func testRemainingCount() {
+        let usage = UsageInfo(
+            per5HourPercentage: 0.5,
+            per5HourResetTime: nil,
+            per1WeekPercentage: 0.25,
+            per1WeekResetTime: Date()
+        )
+        let quota = QuotaConfig(fiveHour: 3000, weekly: 10000)
+        let data = PlanData(
+            subscription: SubscriptionInfo(specCode: "standard", status: "VALID", remainingDays: 10, endTime: Date(), autoRenewFlag: false),
+            usage: usage,
+            quota: quota,
+            resetCards: []
+        )
+        XCTAssertEqual(data.fiveHourRemainingCount, 1500)
+        XCTAssertEqual(data.weeklyRemainingCount, 7500)
+        XCTAssertEqual(data.minRemainingPercentage, 0.5)
+    }
+}

@@ -11,6 +11,10 @@ struct PopoverView: View {
         VStack(alignment: .leading, spacing: 16) {
             headerSection
 
+            if polling.isFailing || polling.state == .error {
+                errorBanner
+            }
+
             Divider()
 
             if credentials.status == .incomplete || credentials.status == .expired {
@@ -41,11 +45,46 @@ struct PopoverView: View {
                 .font(.system(size: 14, weight: .bold))
             Spacer()
             if let lastUpdated = polling.lastUpdated {
-                Text("更新于 \(lastUpdated, style: .time)")
+                Text("更新于 \(Self.timeFormatter.string(from: lastUpdated))")
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
             }
         }
+    }
+
+    // MARK: - 更新失败横幅
+
+    private static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm:ss"
+        return f
+    }()
+
+    /// 持续失败时展示：明确告知用户当前是旧数据，而不是静默装死
+    private var errorBanner: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 12))
+                    .foregroundColor(.orange)
+                Text("数据更新失败")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.orange)
+            }
+            if let msg = polling.lastError {
+                Text(msg)
+                    .font(.system(size: 10))
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+            }
+            Text("当前显示的是旧数据，请点击刷新重试")
+                .font(.system(size: 10))
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(8)
+        .background(Color.orange.opacity(0.12))
+        .cornerRadius(6)
     }
 
     // MARK: - 凭证警告

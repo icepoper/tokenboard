@@ -16,8 +16,9 @@ final class StatusItemController: NSObject {
     // MARK: - 启动
 
     func setup() {
-        // 状态栏项：显式宽度，确保胶囊完整显示
-        statusItem = NSStatusBar.system.statusItem(withLength: 120)
+        // 状态栏项：宽度按最宽内容（QW 100%）测量，避免过宽留白
+        let width = Self.idealItemWidth()
+        statusItem = NSStatusBar.system.statusItem(withLength: width)
         guard let button = statusItem.button else { return }
 
         // NSHostingView 承载菜单栏标签（标准 SwiftUI 渲染，@Published 变化自动更新）
@@ -27,9 +28,9 @@ final class StatusItemController: NSObject {
             .environmentObject(settings)
 
         let hosting = NSHostingView(rootView: label)
-        hosting.frame = NSRect(x: 0, y: 0, width: 120, height: 22)
+        hosting.frame = NSRect(x: 0, y: 0, width: width, height: 22)
         button.addSubview(hosting)
-        button.setFrameSize(NSSize(width: 120, height: 22))
+        button.setFrameSize(NSSize(width: width, height: 22))
 
         // 点击切换弹出面板
         button.action = #selector(togglePopover)
@@ -45,6 +46,12 @@ final class StatusItemController: NSObject {
                 .environmentObject(credentials)
                 .environmentObject(settings)
         )
+    }
+
+    /// 用最宽可能内容（"QW 100%"）测量状态项宽度，数值变化时宽度不跳动
+    private static func idealItemWidth() -> CGFloat {
+        let probe = NSHostingView(rootView: ProgressRing(progress: 1, text: "100%"))
+        return ceil(probe.fittingSize.width)
     }
 
     // MARK: - 弹出面板

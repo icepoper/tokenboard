@@ -18,6 +18,8 @@ final class PollingService: ObservableObject {
     @Published var planData: PlanData?
     @Published var state: PollingState = .idle
     @Published var lastUpdated: Date?
+    /// 最近一次失败原因（nil 表示正常）。用于 UI 展示，避免静默显示旧数据
+    @Published var lastError: String?
 
     /// 轮询间隔（秒），持久化到 UserDefaults
     var pollingInterval: Int {
@@ -28,12 +30,20 @@ final class PollingService: ObservableObject {
         }
     }
 
-    private let api = QianwenAPI()
+    private let api: QianwenAPI
     private var pollingTask: Task<Void, Never>?
-    private var consecutiveFailures = 0
-    private let maxConsecutiveFailures = 3
+    private var tracker = FailureTracker()
+
+    /// 连续失败次数（UI 与测试可读）
+    var consecutiveFailures: Int { tracker.consecutiveFailures }
+    /// 是否处于持续失败状态（UI 据此展示错误提示）
+    var isFailing: Bool { tracker.isFailing }
 
     weak var credentialManager: CredentialManager?
+
+    init(api: QianwenAPI = QianwenAPI()) {
+        self.api = api
+    }
 
     // MARK: - 生命周期
 
@@ -45,7 +55,7 @@ final class PollingService: ObservableObject {
         }
         stop()
         state = .polling
-        consecutiveFailures = 0
+        tracker.recordSuccess()
 
         pollingTask = Task { [weak self] in
             // 首次立即拉取
@@ -73,8 +83,12 @@ final class PollingService: ObservableObject {
     /// 手动刷新
     func refresh() async {
         state = .refreshing
+        if tracker.consecutiveFailures > 0 {
+            // 处于失败状态时先丢弃旧连接池，保证手动刷新走新连接
+            await api.resetSession()
+        }
         await doFetch()
-        if credentialManager?.status == .complete {
+        if credentialManager?.status == .complete, !tracker.isFailing {
             state = .polling
         }
     }
@@ -86,6 +100,7 @@ final class PollingService: ObservableObject {
         } else {
             stop()
             planData = nil
+            lastError = nil
         }
     }
 
@@ -101,11 +116,7 @@ final class PollingService: ObservableObject {
 
         do {
             let data = try await api.fetchAll(cookie: cookie, secToken: secToken)
-            planData = data
-            lastUpdated = Date()
-            consecutiveFailures = 0
-
-            // 额度预警
+            applySuccess(data)
             await NotificationHelper.shared.checkAndNotify(usage: data.usage)
 
             if state != .refreshing {
@@ -118,16 +129,23 @@ final class PollingService: ObservableObject {
                 state = .idle
                 return
             }
-            await handleFailure()
+            await handleFailure(Self.describe(error))
         } catch {
-            await handleFailure()
+            await handleFailure(Self.describe(error))
         }
     }
 
-    private func handleFailure() async {
-        consecutiveFailures += 1
+    /// 失败处理：记录错误、按决策重建连接池 / 重试 / 进入错误状态
+    func handleFailure(_ message: String) async {
+        lastError = message
+        let decision = tracker.recordFailure()
 
-        if consecutiveFailures == 1 {
+        if decision.shouldResetSession {
+            // 丢弃可能已失效的连接池（代理重载、节点切换、网络切换等场景）
+            await api.resetSession()
+        }
+
+        if decision.shouldRetry {
             // 单次失败，5 秒后重试一次
             try? await Task.sleep(nanoseconds: 5_000_000_000)
             guard let cm = credentialManager,
@@ -135,18 +153,37 @@ final class PollingService: ObservableObject {
                   let secToken = cm.secToken, !secToken.isEmpty else { return }
             do {
                 let data = try await api.fetchAll(cookie: cookie, secToken: secToken)
-                planData = data
-                lastUpdated = Date()
-                consecutiveFailures = 0
+                applySuccess(data)
+                await NotificationHelper.shared.checkAndNotify(usage: data.usage)
                 return
             } catch {
-                consecutiveFailures += 1
+                lastError = Self.describe(error)
+                let second = tracker.recordFailure()
+                if second.isError {
+                    state = .error
+                }
+                return
             }
         }
 
-        if consecutiveFailures >= maxConsecutiveFailures {
+        if decision.isError {
             state = .error
         }
+    }
+
+    private func applySuccess(_ data: PlanData) {
+        planData = data
+        lastUpdated = Date()
+        lastError = nil
+        tracker.recordSuccess()
+    }
+
+    /// 错误描述：APIError 用中文用户文案，其余保留系统原始信息（英文，便于排查）
+    static func describe(_ error: Error) -> String {
+        if let apiError = error as? APIError {
+            return apiError.errorDescription ?? "Unknown error"
+        }
+        return error.localizedDescription
     }
 }
 

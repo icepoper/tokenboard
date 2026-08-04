@@ -17,7 +17,7 @@ macOS 菜单栏实时监控**千问（Qwen）Token Plan** 额度消耗的轻量�
 
 ## 📦 安装
 
-从 [Releases](https://github.com/icepoper/tokenboard/releases) 下载 `TokenBoard-0.1.0-universal.dmg`：
+从 [Releases](https://github.com/icepoper/tokenboard/releases) 下载 `TokenBoard-0.1.1-universal.dmg`：
 
 1. 打开 DMG，把 TokenBoard 拖入 Applications
 2. **首次打开**（未签名应用）：右键点击 app → **打开**，或到 系统设置 → 隐私与安全性 → **仍要打开**

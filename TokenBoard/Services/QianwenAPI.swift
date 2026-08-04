@@ -19,13 +19,39 @@ actor QianwenAPI {
         "productCode": "p_efm"
     ]
 
-    private let session: URLSession
+    private var session: URLSession
+
+    /// 会话重建次数（诊断与测试用）
+    private(set) var sessionResetCount = 0
 
     init() {
+        self.session = Self.makeSession()
+    }
+
+    /// 创建 URLSession：监控数据必须实时，禁用一切本地缓存
+    private static func makeSession() -> URLSession {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = Self.timeoutInterval
         config.timeoutIntervalForResource = Self.timeoutInterval
-        self.session = URLSession(configuration: config)
+        config.requestCachePolicy = .reloadIgnoringLocalCacheData
+        config.urlCache = nil
+        return URLSession(configuration: config)
+    }
+
+    /// 重建会话，丢弃可能已失效的连接池。
+    /// 代理重载 / 节点切换 / 网络切换后，旧的 keep-alive 隧道可能半死：
+    /// 请求写得进去但永远等不到响应，导致所有轮询持续超时。重建会话可强制建立新连接。
+    func resetSession() {
+        let old = session
+        session = Self.makeSession()
+        sessionResetCount += 1
+        old.invalidateAndCancel()
+    }
+
+    /// 业务 API URL（附带毫秒级 cache-buster，防止中间层按 URL 缓存响应）
+    static func businessURL(api: String) -> URL {
+        let ts = Int(Date().timeIntervalSince1970 * 1000)
+        return URL(string: businessBaseURL + "?product=sfm_bailian&action=BroadScopeAspnGateway&api=\(api)&_=\(ts)")!
     }
 
     // MARK: - 公开方法
@@ -149,7 +175,7 @@ actor QianwenAPI {
         ]
 
         // reset-card 返回的 data 是数组，需要特殊处理
-        let url = URL(string: Self.businessBaseURL + "?product=sfm_bailian&action=BroadScopeAspnGateway&api=zeldaHttp.apikeyMgr.%2Ftokenplan%2Fpersonal%2Fapi%2Fv2%2Freset-card%2Flist")!
+        let url = Self.businessURL(api: "zeldaHttp.apikeyMgr.%2Ftokenplan%2Fpersonal%2Fapi%2Fv2%2Freset-card%2Flist")
         let request = try buildRequest(url: url, params: params, cookie: cookie, secToken: secToken)
 
         let (data, response) = try await session.data(for: request)
@@ -194,7 +220,7 @@ actor QianwenAPI {
         cookie: String,
         secToken: String
     ) async throws -> T {
-        let url = URL(string: Self.businessBaseURL + "?product=sfm_bailian&action=BroadScopeAspnGateway&api=\(api)")!
+        let url = Self.businessURL(api: api)
         let request = try buildRequest(url: url, params: params, cookie: cookie, secToken: secToken)
 
         let (data, response) = try await session.data(for: request)
@@ -204,7 +230,7 @@ actor QianwenAPI {
     }
 
     /// 构造 POST 请求
-    private func buildRequest(
+    func buildRequest(
         url: URL,
         params: [String: Any],
         cookie: String,
