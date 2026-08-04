@@ -82,3 +82,30 @@ struct BSSInstance: Decodable {
     let EndTime: String?
     let RenewStatus: String?
 }
+
+// MARK: - 用量趋势响应 (getModelMonitorDataWithOss)
+
+struct UsageTrendResponseData: Decodable {
+    let originData: [UsageTrendSeries]
+}
+
+struct UsageTrendSeries: Decodable {
+    let aggMethod: String       // "sum" 按天 / "cumsum" 周累计
+    let points: [UsageTrendPoint]
+    let labels: UsageTrendLabels
+}
+
+struct UsageTrendPoint: Decodable {
+    let value: Double
+    let timestamp: Double       // 毫秒时间戳，当天结束时刻
+}
+
+struct UsageTrendLabels: Decodable {
+    let unit: String?
+    let usageType: String?
+
+    enum CodingKeys: String, CodingKey {
+        case unit
+        case usageType = "usage_type"
+    }
+}

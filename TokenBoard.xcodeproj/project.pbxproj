@@ -19,8 +19,11 @@
 		6871216E5DCFF325A7F10AF7 /* APIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B6467B3C35B31E5EF51459 /* APIResponse.swift */; };
 		78D118384F75A9F4DB455467 /* qwen.svg in Resources */ = {isa = PBXBuildFile; fileRef = 186EA1014E6E431D486248BB /* qwen.svg */; };
 		7D46BC982BDA9B69936C7100 /* FailureTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA15AF23A8AE59FAF1303CB /* FailureTrackerTests.swift */; };
+		968EFB7AA7B72A9A7EF8FAE3 /* UsageTrend.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EE0EF5AA1DBF3715C65FB5 /* UsageTrend.swift */; };
 		B22D1A3E0ADBED4211B75147 /* TokenBoardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A57C7839CFFE0EFAB2ADFA /* TokenBoardApp.swift */; };
+		B2796F52A179A50599105621 /* TrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E8AE21C515A457DD58B20D /* TrendChartView.swift */; };
 		B78F934F32B4C4D2E5C7C26C /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D0C18CADD8887FF988D4C2 /* StatusItemController.swift */; };
+		B8295B4213967824CAB97473 /* UsageTrendTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2271062F405B8428A3728F1 /* UsageTrendTests.swift */; };
 		C092FEEB7A31B467854DAD26 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552684FB81E06B6B58B42042 /* KeychainHelper.swift */; };
 		C57926213A85D9B4BC5E6234 /* ProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E21E030384A768803E6FFB /* ProgressRing.swift */; };
 		C5AA20FF9003AD715A4A6455 /* QuotaBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E703F1236EB3AF2E2B51AA /* QuotaBar.swift */; };
@@ -55,6 +58,7 @@
 		6689AFA4E4134311B50C2109 /* FailureTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailureTracker.swift; sourceTree = "<group>"; };
 		702B2D80E1B925B527B0D21D /* TokenBoard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TokenBoard.entitlements; sourceTree = "<group>"; };
 		70D8352934409ECF6A20046F /* PlanDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDataTests.swift; sourceTree = "<group>"; };
+		73E8AE21C515A457DD58B20D /* TrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendChartView.swift; sourceTree = "<group>"; };
 		7555C658740210666926F4C9 /* MenuBarLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarLabel.swift; sourceTree = "<group>"; };
 		82183C969FD3E7281B035511 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		85C90874B2098F82EBAC7BDE /* TokenBoardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TokenBoardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -66,8 +70,10 @@
 		AEAA4FE8F119BA51A9DBCF16 /* QianwenAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QianwenAPI.swift; sourceTree = "<group>"; };
 		B1D0C18CADD8887FF988D4C2 /* StatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemController.swift; sourceTree = "<group>"; };
 		B21EF2E2C25A74077DB887B7 /* NotificationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHelper.swift; sourceTree = "<group>"; };
+		B2271062F405B8428A3728F1 /* UsageTrendTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageTrendTests.swift; sourceTree = "<group>"; };
 		C7E703F1236EB3AF2E2B51AA /* QuotaBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaBar.swift; sourceTree = "<group>"; };
 		C8EE8DDB7FE8851E2ED1A091 /* QianwenAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QianwenAPITests.swift; sourceTree = "<group>"; };
+		D8EE0EF5AA1DBF3715C65FB5 /* UsageTrend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageTrend.swift; sourceTree = "<group>"; };
 		F0156B85A4C412A4F716C89A /* PlanData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -86,6 +92,7 @@
 				9AB63AE855701F55CBE88A8E /* APIError.swift */,
 				41B6467B3C35B31E5EF51459 /* APIResponse.swift */,
 				F0156B85A4C412A4F716C89A /* PlanData.swift */,
+				D8EE0EF5AA1DBF3715C65FB5 /* UsageTrend.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -143,6 +150,7 @@
 				70D8352934409ECF6A20046F /* PlanDataTests.swift */,
 				293F47A1B68BD2BE72C6DA25 /* PollingServiceTests.swift */,
 				C8EE8DDB7FE8851E2ED1A091 /* QianwenAPITests.swift */,
+				B2271062F405B8428A3728F1 /* UsageTrendTests.swift */,
 			);
 			path = TokenBoardTests;
 			sourceTree = "<group>";
@@ -155,6 +163,7 @@
 				50E21E030384A768803E6FFB /* ProgressRing.swift */,
 				C7E703F1236EB3AF2E2B51AA /* QuotaBar.swift */,
 				82183C969FD3E7281B035511 /* SettingsView.swift */,
+				73E8AE21C515A457DD58B20D /* TrendChartView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -259,6 +268,7 @@
 				0C93EBCF74FA127F7DF88CA5 /* PlanDataTests.swift in Sources */,
 				2C85B162C54A242647CAD341 /* PollingServiceTests.swift in Sources */,
 				27DABF058ED097183832E7E8 /* QianwenAPITests.swift in Sources */,
+				B8295B4213967824CAB97473 /* UsageTrendTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,6 +293,8 @@
 				5FE12F4F9436EF224D3C43A9 /* SettingsView.swift in Sources */,
 				B78F934F32B4C4D2E5C7C26C /* StatusItemController.swift in Sources */,
 				B22D1A3E0ADBED4211B75147 /* TokenBoardApp.swift in Sources */,
+				B2796F52A179A50599105621 /* TrendChartView.swift in Sources */,
+				968EFB7AA7B72A9A7EF8FAE3 /* UsageTrend.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,7 +473,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TokenBoard/TokenBoard.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads = NO;
@@ -470,7 +482,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.2;
+				MARKETING_VERSION = 0.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tokenboard.app;
 				SDKROOT = macosx;
 			};
@@ -483,7 +495,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TokenBoard/TokenBoard.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads = NO;
@@ -492,7 +504,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.2;
+				MARKETING_VERSION = 0.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tokenboard.app;
 				SDKROOT = macosx;
 			};

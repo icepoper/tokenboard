@@ -20,6 +20,12 @@ final class PollingService: ObservableObject {
     @Published var lastUpdated: Date?
     /// 最近一次失败原因（nil 表示正常）。用于 UI 展示，避免静默显示旧数据
     @Published var lastError: String?
+    /// 最近 7 天用量趋势（辅助信息，拉取失败时保留旧数据）
+    @Published var trend: UsageTrend?
+
+    /// 趋势缓存有效期（秒）：按天粒度的数据不需要每轮轮询都拉
+    private let trendCacheTTL: TimeInterval = 30 * 60
+    private var trendFetchedAt: Date?
 
     /// 轮询间隔（秒），持久化到 UserDefaults
     var pollingInterval: Int {
@@ -87,7 +93,7 @@ final class PollingService: ObservableObject {
             // 处于失败状态时先丢弃旧连接池，保证手动刷新走新连接
             await api.resetSession()
         }
-        await doFetch()
+        await doFetch(forceTrend: true)
         if credentialManager?.status == .complete, !tracker.isFailing {
             state = .polling
         }
@@ -100,13 +106,15 @@ final class PollingService: ObservableObject {
         } else {
             stop()
             planData = nil
+            trend = nil
+            trendFetchedAt = nil
             lastError = nil
         }
     }
 
     // MARK: - 内部
 
-    private func doFetch() async {
+    private func doFetch(forceTrend: Bool = false) async {
         guard let cm = credentialManager,
               let cookie = cm.cookie, !cookie.isEmpty,
               let secToken = cm.secToken, !secToken.isEmpty else {
@@ -117,6 +125,7 @@ final class PollingService: ObservableObject {
         do {
             let data = try await api.fetchAll(cookie: cookie, secToken: secToken)
             applySuccess(data)
+            await fetchTrendIfNeeded(cookie: cookie, secToken: secToken, force: forceTrend)
             await NotificationHelper.shared.checkAndNotify(usage: data.usage)
 
             if state != .refreshing {
@@ -168,6 +177,23 @@ final class PollingService: ObservableObject {
 
         if decision.isError {
             state = .error
+        }
+    }
+
+    /// 拉取用量趋势。趋势是辅助信息：失败时静默保留旧数据，
+    /// 绝不记录失败 / 不触发会话重建 / 不进入错误状态，避免拖垮主额度监控。
+    private func fetchTrendIfNeeded(cookie: String, secToken: String, force: Bool) async {
+        if !force,
+           let fetchedAt = trendFetchedAt,
+           Date().timeIntervalSince(fetchedAt) < trendCacheTTL {
+            return
+        }
+        do {
+            let t = try await api.fetchUsageTrend(cookie: cookie, secToken: secToken)
+            trend = t
+            trendFetchedAt = Date()
+        } catch {
+            // 静默失败：保留 trend 旧值（可能为 nil，UI 显示占位文案）
         }
     }
 

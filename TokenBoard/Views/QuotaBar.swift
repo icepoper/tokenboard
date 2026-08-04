@@ -60,7 +60,7 @@ struct QuotaBar: View {
         if resetTimeString == "--:--" {
             return "已重置"
         }
-        return "重置于 \(resetTimeString) · 还剩\(resetCountdown)"
+        return "重置时间 \(resetTimeString) · 还剩\(resetCountdown)"
     }
 
     private var remainingColor: Color {

@@ -8,6 +8,7 @@ macOS 菜单栏实时监控**千问（Qwen）Token Plan** 额度消耗的轻量�
 
 - **菜单栏胶囊**：`QW 5h剩余% | 7d剩余%` 双百分比，两个周期剩余额度一目了然
 - **5h / 7d 滑动窗口**：剩余比例、剩余次数、重置倒计时
+- **最近 7 天用量趋势**：按天堆叠柱状图（输入 / 缓存 / 输出），点击查看单日总量与缓存命中率
 - **套餐信息**：等级、状态、剩余天数、到期时间
 - **加油包**：剩余加油包信息
 - **额度预警**：剩余低于 20% 时发送系统通知
@@ -17,7 +18,7 @@ macOS 菜单栏实时监控**千问（Qwen）Token Plan** 额度消耗的轻量�
 
 ## 📦 安装
 
-从 [Releases](https://github.com/icepoper/tokenboard/releases) 下载 `TokenBoard-0.1.2-universal.dmg`：
+从 [Releases](https://github.com/icepoper/tokenboard/releases) 下载 `TokenBoard-0.1.3-universal.dmg`：
 
 1. 打开 DMG，把 TokenBoard 拖入 Applications
 2. **首次打开**（未签名应用）：右键点击 app → **打开**，或到 系统设置 → 隐私与安全性 → **仍要打开**

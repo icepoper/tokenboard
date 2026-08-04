@@ -211,6 +211,46 @@ actor QianwenAPI {
         }
     }
 
+    /// 获取最近 7 天用量趋势（工作台「用量详情」按天统计口径）
+    func fetchUsageTrend(cookie: String, secToken: String) async throws -> UsageTrend {
+        let api = "zeldaEasy.bailian-telemetry.platform-model.getModelMonitorDataWithOss"
+        let window = Self.trendTimeWindow()
+
+        let params: [String: Any] = [
+            "Api": api,
+            "Data": [
+                "reqDTO": [
+                    "productMode": "TokenPlanPersonal",
+                    "startTime": window.startTime,
+                    "endTime": window.endTime,
+                    "step": 86400,
+                    "metricFilters": [["aggMethod": "sum", "metricName": "model_usage"]]
+                ] as [String: Any],
+                "cornerstoneParam": Self.cornerstoneParam
+            ] as [String: Any],
+            "V": "1.0"
+        ]
+
+        let responseData: UsageTrendResponseData = try await callBusinessAPI(
+            api: api,
+            params: params,
+            cookie: cookie,
+            secToken: secToken
+        )
+        return UsageTrend(response: responseData)
+    }
+
+    /// 趋势查询时间窗（毫秒）：endTime = 明天 00:00 北京时间，startTime = endTime - 7 天。
+    /// 服务端按北京时间的自然日分桶，窗口必须对齐，否则首尾两天数据会缺失或错位。
+    static func trendTimeWindow(now: Date = Date()) -> (startTime: Int64, endTime: Int64) {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Asia/Shanghai")!
+        let startOfToday = calendar.startOfDay(for: now)
+        let endTime = startOfToday.addingTimeInterval(86400)
+        let startTime = endTime.addingTimeInterval(-7 * 86400)
+        return (Int64(startTime.timeIntervalSince1970 * 1000), Int64(endTime.timeIntervalSince1970 * 1000))
+    }
+
     // MARK: - 内部方法
 
     /// 通用业务 API 调用
