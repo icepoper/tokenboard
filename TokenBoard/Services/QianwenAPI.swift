@@ -181,24 +181,19 @@ actor QianwenAPI {
         let (data, response) = try await session.data(for: request)
         try validateHTTPResponse(response)
 
-        // 解析外层结构
+        // 解析外层结构（与主解析共用兼容逻辑）
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        guard let outerData = json?["data"] as? [String: Any],
-              let dataV2 = outerData["DataV2"] as? [String: Any],
-              let innerData = dataV2["data"] as? [String: Any],
-              let code = innerData["code"] as? String, code == "SUCCESS" else {
-            // 检查认证错误
-            if let outerData = json?["data"] as? [String: Any],
-               let dataV2 = outerData["DataV2"] as? [String: Any],
-               let ret = dataV2["ret"] as? [String],
-               ret.first?.contains("FAIL") == true {
-                throw APIError.authExpired
-            }
+        let innerData: Any
+        do {
+            innerData = try Self.extractInnerData(from: json)
+        } catch APIError.authExpired {
+            throw APIError.authExpired
+        } catch {
             return []
         }
 
         // data 字段是数组
-        guard let cardArray = innerData["data"] as? [[String: Any]] else {
+        guard let cardArray = innerData as? [[String: Any]] else {
             return []
         }
 
@@ -314,30 +309,47 @@ actor QianwenAPI {
     /// 解析业务 API 响应（嵌套 JSON 结构）
     private func parseBusinessResponse<T: Decodable>(_ data: Data) throws -> T {
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        let innerData = try Self.extractInnerData(from: json)
+
+        // 将 innerData 重新序列化为 Data 再解码
+        let innerDataBytes = try JSONSerialization.data(withJSONObject: innerData)
+        return try JSONDecoder().decode(T.self, from: innerDataBytes)
+    }
+
+    /// 提取业务响应中的 data.DataV2.data.data。
+    /// 网关不同后端节点的成功标记不一致：有的返回 code=="SUCCESS"，
+    /// 有的只返回 success==true（遥测类接口实测如此），三种判定兼容，
+    /// 否则会出现"有时能解析、有时报解析错误"的随机故障。
+    static func extractInnerData(from json: [String: Any]?) throws -> Any {
+        guard let outerData = json?["data"] as? [String: Any],
+              let dataV2 = outerData["DataV2"] as? [String: Any] else {
+            throw APIError.parseError("响应缺少 DataV2 结构")
+        }
 
         // 检查认证错误
-        if let outerData = json?["data"] as? [String: Any],
-           let dataV2 = outerData["DataV2"] as? [String: Any],
-           let ret = dataV2["ret"] as? [String],
+        if let ret = dataV2["ret"] as? [String],
            let firstRet = ret.first,
            firstRet.contains("FAIL_SYS_SESSION_EXPIRED") || firstRet.contains("FAIL_SYS_TOKEN_EXOIRED") {
             throw APIError.authExpired
         }
 
-        // 提取 data.DataV2.data.data
-        guard let outerData = json?["data"] as? [String: Any],
-              let dataV2 = outerData["DataV2"] as? [String: Any],
-              let innerWrapper = dataV2["data"] as? [String: Any],
-              let code = innerWrapper["code"] as? String,
-              code == "SUCCESS",
-              let innerData = innerWrapper["data"] else {
-            let errorMsg = (json?["data"] as? [String: Any])?["errorMsg"] as? String ?? "未知错误"
-            throw APIError.parseError(errorMsg)
+        guard let innerWrapper = dataV2["data"] as? [String: Any] else {
+            throw APIError.parseError("响应缺少 data 层")
         }
 
-        // 将 innerData 重新序列化为 Data 再解码
-        let innerDataBytes = try JSONSerialization.data(withJSONObject: innerData)
-        return try JSONDecoder().decode(T.self, from: innerDataBytes)
+        let codeOK = (innerWrapper["code"] as? String) == "SUCCESS"
+        let successOK = innerWrapper["success"] as? Bool == true
+        let retOK = (dataV2["ret"] as? [String])?.first?.hasPrefix("SUCCESS") == true
+
+        guard codeOK || successOK || retOK else {
+            let errorMsg = outerData["errorMsg"] as? String ?? ""
+            throw APIError.parseError(errorMsg.isEmpty ? "接口返回失败状态" : errorMsg)
+        }
+
+        guard let innerData = innerWrapper["data"] else {
+            throw APIError.parseError("响应缺少数据体")
+        }
+        return innerData
     }
 }
 

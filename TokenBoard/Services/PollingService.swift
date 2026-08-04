@@ -22,6 +22,8 @@ final class PollingService: ObservableObject {
     @Published var lastError: String?
     /// 最近 7 天用量趋势（辅助信息，拉取失败时保留旧数据）
     @Published var trend: UsageTrend?
+    /// 趋势最近一次失败原因（nil = 正常）。用于 UI 展示，趋势失败不再完全静默
+    @Published var trendError: String?
 
     /// 趋势缓存有效期（秒）：按天粒度的数据不需要每轮轮询都拉
     private let trendCacheTTL: TimeInterval = 30 * 60
@@ -107,6 +109,7 @@ final class PollingService: ObservableObject {
             stop()
             planData = nil
             trend = nil
+            trendError = nil
             trendFetchedAt = nil
             lastError = nil
         }
@@ -191,9 +194,12 @@ final class PollingService: ObservableObject {
         do {
             let t = try await api.fetchUsageTrend(cookie: cookie, secToken: secToken)
             trend = t
+            trendError = nil
             trendFetchedAt = Date()
         } catch {
-            // 静默失败：保留 trend 旧值（可能为 nil，UI 显示占位文案）
+            // 保留 trend 旧值；记录原因供 UI 展示。
+            // 不进 FailureTracker / 不触发会话重建，避免拖垮主额度监控。
+            trendError = Self.describe(error)
         }
     }
 

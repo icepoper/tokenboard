@@ -24,9 +24,9 @@ struct PopoverView: View {
                 Divider()
                 quotaSection(data)
                 Divider()
-                trendSection
-                Divider()
                 addonSection(data.resetCards)
+                Divider()
+                trendSection
             } else {
                 loadingSection
             }
@@ -171,7 +171,7 @@ struct PopoverView: View {
     // MARK: - 用量趋势
 
     private var trendSection: some View {
-        TrendChartView(trend: polling.trend)
+        TrendChartView(trend: polling.trend, errorMessage: polling.trendError)
     }
 
     // MARK: - 加油包

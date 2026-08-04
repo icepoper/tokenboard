@@ -3,6 +3,8 @@ import SwiftUI
 /// 最近 7 天用量趋势图（堆叠柱状图，点击查看单日明细）
 struct TrendChartView: View {
     let trend: UsageTrend?
+    /// 趋势最近一次失败原因（nil = 正常）
+    let errorMessage: String?
 
     /// 选中的天（nil 表示默认选最后一天）
     @State private var selectedIndex: Int?
@@ -29,6 +31,34 @@ struct TrendChartView: View {
                 chartView(trend)
                 detailRow(trend)
                 legendRow
+            } else if trend == nil, let errorMessage {
+                // 拉取失败：展示原因，不再静默装死
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("趋势加载失败")
+                        .font(.system(size: 11))
+                        .foregroundColor(.orange)
+                    Text(errorMessage)
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                    Text("点击刷新重试")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 8)
+            } else if trend == nil {
+                // 首次加载、接口尚未返回：明确是"加载中"而不是"没数据"
+                HStack(spacing: 6) {
+                    Spacer()
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("趋势加载中...")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .padding(.vertical, 12)
             } else {
                 Text("暂无用量数据")
                     .font(.system(size: 11))

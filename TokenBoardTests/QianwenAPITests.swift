@@ -60,3 +60,76 @@ final class QianwenAPITests: XCTestCase {
         XCTAssertEqual(after, before + 1)
     }
 }
+
+// MARK: - 业务响应解析兼容测试
+
+extension QianwenAPITests {
+
+    /// 形态一：传统 code=="SUCCESS"（subscription/usage 等接口）
+    func testExtractInnerDataWithCodeSuccess() throws {
+        let json: [String: Any] = [
+            "data": [
+                "DataV2": [
+                    "ret": ["SUCCESS::接口调用成功"],
+                    "data": ["code": "SUCCESS", "data": ["foo": 1]]
+                ]
+            ]
+        ]
+        let inner = try QianwenAPI.extractInnerData(from: json) as? [String: Any]
+        XCTAssertEqual(inner?["foo"] as? Int, 1)
+    }
+
+    /// 形态二：遥测接口只返回 success==true，无 code 字段（v0.1.3 线上故障形态）
+    func testExtractInnerDataWithSuccessBoolOnly() throws {
+        let json: [String: Any] = [
+            "data": [
+                "errorMsg": "",
+                "DataV2": [
+                    "ret": ["SUCCESS::接口调用成功"],
+                    "data": [
+                        "success": true,
+                        "requestId": "x",
+                        "data": ["originData": []]
+                    ]
+                ]
+            ]
+        ]
+        let inner = try QianwenAPI.extractInnerData(from: json) as? [String: Any]
+        XCTAssertNotNil(inner?["originData"])
+    }
+
+    /// 认证过期必须抛 authExpired，不能被兼容逻辑吞掉
+    func testExtractInnerDataAuthExpired() {
+        let json: [String: Any] = [
+            "data": [
+                "DataV2": [
+                    "ret": ["FAIL_SYS_SESSION_EXPIRED::会话过期"],
+                    "data": ["success": true, "data": ["a": 1]]
+                ]
+            ]
+        ]
+        XCTAssertThrowsError(try QianwenAPI.extractInnerData(from: json)) { error in
+            guard case APIError.authExpired = error else {
+                return XCTFail("应抛 authExpired，实际 \(error)")
+            }
+        }
+    }
+
+    /// 明确失败状态（success==false 且无 code）应抛 parseError 且文案非空
+    func testExtractInnerDataFailureStatus() {
+        let json: [String: Any] = [
+            "data": [
+                "DataV2": [
+                    "ret": ["UNKNOWN::未知"],
+                    "data": ["success": false, "data": ["a": 1]]
+                ]
+            ]
+        ]
+        XCTAssertThrowsError(try QianwenAPI.extractInnerData(from: json)) { error in
+            guard case APIError.parseError(let msg) = error else {
+                return XCTFail("应抛 parseError，实际 \(error)")
+            }
+            XCTAssertFalse(msg.isEmpty, "错误文案不能为空")
+        }
+    }
+}
