@@ -64,4 +64,5 @@
 
 1. 每次发布新版本前，先在顶部 `[Unreleased]` 下记录本次更新内容（分类：`新增` / `优化` / `修复` / `其他`）
 2. 发版时把 `[Unreleased]` 改为 `[版本号] - 日期`，并新建空的 `[Unreleased]`
-3. 将对应版本的更新内容复制到 GitHub Releases 发布说明（或使用 `gh release create --notes-file`）
+3. 将对应版本的更新内容复制到 GitHub Releases 发布说明，**中英双语**：中文为默认正文，英文放在 `<details>` 折叠块里一键展开（GitHub Releases 不支持自动切换语言，这是最接近"切换"的做法）
+4. 可用 `gh release create --notes-file` 或 `gh release edit --notes-file` 写入

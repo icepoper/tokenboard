@@ -64,4 +64,5 @@ This file records TokenBoard's release history and is the source of truth for th
 
 1. Before each release, record the changes under the `[Unreleased]` section at the top (categories: `Added` / `Improved` / `Fixed` / `Other`)
 2. When releasing, rename `[Unreleased]` to `[version] - date` and create a fresh `[Unreleased]`
-3. Copy the corresponding version's notes to the GitHub Release (or use `gh release create --notes-file`)
+3. Copy the corresponding version's notes to the GitHub Release, **bilingual**: Chinese as the default body, English inside a `<details>` block that expands with one click (GitHub Releases has no automatic language switching; this is the closest to a "switch")
+4. You can write them with `gh release create --notes-file` or `gh release edit --notes-file`
