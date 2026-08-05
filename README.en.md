@@ -4,7 +4,7 @@
 
 A lightweight macOS menu bar tool that monitors your **Qwen Token Plan** quota consumption in real time. See the remaining quota of the 5-hour / 7-day sliding windows at a glance.
 
-![Menu bar capsule + popover](docs/screenshot-overview.png)
+![Menu bar capsule + popover](docs/tokenplan-en.png)
 
 ## Features
 

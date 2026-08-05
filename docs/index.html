@@ -334,7 +334,7 @@
       <p class="sec-sub" data-i18n="shot.sub">点击菜单栏图标展开面板：双周期配额、加油包、7 天趋势图尽收眼底。</p>
     </div>
     <div class="shot-frame reveal">
-      <img src="screenshot-overview.png" alt="TokenBoard 弹出面板截图：显示 5 小时与 7 天剩余额度、加油包与最近 7 天用量趋势图" width="746" height="1268" data-i18n-alt="shot.alt">
+      <img id="shotImg" src="screenshot-overview.png" alt="TokenBoard 弹出面板截图：显示 5 小时与 7 天剩余额度、加油包与最近 7 天用量趋势图" width="728" height="1286" data-i18n-alt="shot.alt">
     </div>
   </section>
 
@@ -492,6 +492,8 @@
     });
     const toggle = document.getElementById('langToggle');
     if (toggle) toggle.textContent = lang === 'zh' ? 'EN' : '中文';
+    const shot = document.getElementById('shotImg');
+    if (shot) shot.src = lang === 'en' ? 'tokenplan-en.png' : 'screenshot-overview.png';
   }
 
   const toggleBtn = document.getElementById('langToggle');
