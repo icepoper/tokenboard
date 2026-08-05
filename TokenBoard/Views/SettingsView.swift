@@ -127,6 +127,35 @@ struct SettingsView: View {
                 .padding(8)
             }
 
+            // MARK: 语言
+            GroupBox {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("语言")
+                        .font(.system(size: 13, weight: .semibold))
+
+                    HStack {
+                        Text("界面语言")
+                            .font(.system(size: 12))
+                        Spacer()
+                        Picker("", selection: $settings.language) {
+                            ForEach(AppLanguage.allCases) { lang in
+                                Text(lang.displayName).tag(lang)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .frame(width: 150)
+                        .onChange(of: settings.language) { newValue in
+                            handleLanguageChange(newValue)
+                        }
+                    }
+
+                    Text("切换语言后需重启应用生效")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+                .padding(8)
+            }
+
             // MARK: 胶囊外观
             GroupBox {
                 VStack(alignment: .leading, spacing: 10) {
@@ -302,6 +331,39 @@ struct SettingsView: View {
             } catch {
                 launchAtLogin = !enabled
             }
+        }
+    }
+
+    // MARK: - 语言切换
+
+    /// 语言变化处理：若所选语言不是当前生效语言，提示重启
+    private func handleLanguageChange(_ newLanguage: AppLanguage) {
+        // 所选语言已是当前生效语言时无需重启（如系统中文下选中文）
+        if let code = newLanguage.appleLanguagesCode,
+           code == Bundle.main.preferredLocalizations.first {
+            return
+        }
+
+        let alert = NSAlert()
+        alert.alertStyle = .informational
+        alert.messageText = String(localized: "切换语言需要重启应用")
+        alert.informativeText = String(localized: "重启后语言设置立即生效。")
+        alert.addButton(withTitle: String(localized: "立即重启"))
+        alert.addButton(withTitle: String(localized: "稍后"))
+        if alert.runModal() == .alertFirstButtonReturn {
+            relaunchApp()
+        }
+    }
+
+    /// 重新启动应用：用 `open -n` 强制拉起新实例（旧实例仍在运行），稍后退出当前实例
+    private func relaunchApp() {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+        process.arguments = ["-n", Bundle.main.bundlePath]
+        try? process.run()
+        // 留出新实例启动时间，再退出当前实例，避免出现空窗
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            NSApp.terminate(nil)
         }
     }
 }

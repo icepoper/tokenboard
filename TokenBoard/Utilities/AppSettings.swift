@@ -1,6 +1,34 @@
 import SwiftUI
 import AppKit
 
+
+/// 应用内语言选项（跟随系统 / 中文 / English）
+enum AppLanguage: String, CaseIterable, Identifiable {
+    case system
+    case zhHans = "zh-Hans"
+    case en = "en"
+
+    var id: String { rawValue }
+
+    /// 对应的 AppleLanguages 语言码；nil 表示跟随系统
+    var appleLanguagesCode: String? {
+        switch self {
+        case .system: return nil
+        case .zhHans: return "zh-Hans"
+        case .en: return "en"
+        }
+    }
+
+    /// 语言显示名（语言自名不翻译；"跟随系统" 本地化）
+    var displayName: String {
+        switch self {
+        case .system: return String(localized: "跟随系统")
+        case .zhHans: return "中文"
+        case .en: return "English"
+        }
+    }
+}
+
 /// 应用设置（响应式单一数据源，设置变更自动通知所有观察者）
 @MainActor
 final class AppSettings: ObservableObject {
@@ -10,6 +38,7 @@ final class AppSettings: ObservableObject {
 
     static let capsuleBgKey = "capsuleBackgroundColor"
     static let pollingIntervalKey = "pollingInterval"
+    static let languageKey = "appLanguage"
 
     /// 默认胶囊背景色（深墨蓝，菜单栏上显眼）
     static let defaultCapsuleBackground = NSColor(
@@ -25,6 +54,11 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// 界面语言（跟随系统 / 中文 / English），持久化到 UserDefaults
+    @Published var language: AppLanguage {
+        didSet { UserDefaults.standard.set(language.rawValue, forKey: Self.languageKey) }
+    }
+
     /// 背景是否为深色（决定文字颜色）
     @Published private(set) var isCapsuleBackgroundDark: Bool
 
@@ -34,6 +68,7 @@ final class AppSettings: ObservableObject {
         let color = Self.loadCapsuleColor() ?? Color(nsColor: Self.defaultCapsuleBackground)
         capsuleBackgroundColor = color
         isCapsuleBackgroundDark = Self.computeDarkness(color)
+        language = AppLanguage(rawValue: UserDefaults.standard.string(forKey: Self.languageKey) ?? "") ?? .system
     }
 
     // MARK: - 操作

@@ -95,3 +95,12 @@
 "非 HTTP 响应" = "Non-HTTP response";
 "额度预警状态" = "Quota alert status";
 "默认深墨蓝，显眼且随状态色描边" = "Deep ink blue, stands out with status-colored border";
+
+"语言" = "Language";
+"界面语言" = "Interface Language";
+"跟随系统" = "System";
+"切换语言后需重启应用生效" = "Restart required for the language change to take effect";
+"切换语言需要重启应用" = "Restart required to switch language";
+"重启后语言设置立即生效。" = "The new language takes effect after restart.";
+"立即重启" = "Restart Now";
+"稍后" = "Later";

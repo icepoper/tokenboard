@@ -32,7 +32,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 // MARK: - App 入口
 
-@main
 struct TokenBoardApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
