@@ -139,9 +139,9 @@ struct TrendChartView: View {
 
     private var legendRow: some View {
         HStack(spacing: 10) {
-            legendItem(color: Self.inputColor, label: "输入")
-            legendItem(color: Self.cachedColor, label: "缓存")
-            legendItem(color: Self.outputColor, label: "输出")
+            legendItem(color: Self.inputColor, label: String(localized: "输入"))
+            legendItem(color: Self.cachedColor, label: String(localized: "缓存"))
+            legendItem(color: Self.outputColor, label: String(localized: "输出"))
             Spacer()
         }
     }

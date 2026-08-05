@@ -150,7 +150,7 @@ struct PopoverView: View {
     private func quotaSection(_ data: PlanData) -> some View {
         VStack(spacing: 14) {
             QuotaBar(
-                title: "5h 限额",
+                title: String(localized: "5h 限额"),
                 usedPercentage: data.usage.per5HourPercentage,
                 remainingCount: data.fiveHourRemainingCount,
                 totalCount: Int(data.quota.fiveHour),
@@ -158,7 +158,7 @@ struct PopoverView: View {
                 resetCountdown: data.fiveHourResetCountdown
             )
             QuotaBar(
-                title: "7d 限额",
+                title: String(localized: "7d 限额"),
                 usedPercentage: data.usage.per1WeekPercentage,
                 remainingCount: data.weeklyRemainingCount,
                 totalCount: Int(data.quota.weekly),

@@ -64,8 +64,8 @@ final class NotificationHelper {
             if notified5hWindow != resetTime {
                 let pct = Int(usage.per5HourRemaining * 100)
                 sendNotification(
-                    title: "千问 Token Plan 5h 限额预警",
-                    body: "5h 限额仅剩 \(pct)%，重置时间 \(formatTime(p5hReset))"
+                    title: String(localized: "千问 Token Plan 5h 限额预警"),
+                    body: String(localized: "5h 限额仅剩 \(pct)%，重置时间 \(formatTime(p5hReset))")
                 )
                 notified5hWindow = resetTime
             }
@@ -77,8 +77,8 @@ final class NotificationHelper {
             if notified7dWindow != resetTime {
                 let pct = Int(usage.per1WeekRemaining * 100)
                 sendNotification(
-                    title: "千问 Token Plan 7d 限额预警",
-                    body: "7d 限额仅剩 \(pct)%，重置时间 \(formatTime(usage.per1WeekResetTime))"
+                    title: String(localized: "千问 Token Plan 7d 限额预警"),
+                    body: String(localized: "7d 限额仅剩 \(pct)%，重置时间 \(formatTime(usage.per1WeekResetTime))")
                 )
                 notified7dWindow = resetTime
             }
@@ -89,8 +89,8 @@ final class NotificationHelper {
     /// 发送测试通知（用于验证通知通道与图标，仅 Debug 构建）
     func sendTestNotification() {
         sendNotification(
-            title: "TokenBoard 测试通知",
-            body: "通知通道工作正常，此处应显示最新应用图标。"
+            title: String(localized: "TokenBoard 测试通知"),
+            body: String(localized: "通知通道工作正常，此处应显示最新应用图标。")
         )
     }
 #endif

@@ -5,6 +5,7 @@ options:
     macOS: "13.0"
   xcodeVersion: "15.0"
   createIntermediateGroups: true
+  developmentLanguage: zh-Hans
 
 settings:
   base:
@@ -13,6 +14,7 @@ settings:
     CODE_SIGN_IDENTITY: "-"
     ENABLE_HARDENED_RUNTIME: NO
     GENERATE_INFOPLIST_FILE: YES
+    DEVELOPMENT_LANGUAGE: zh-Hans
 
 targets:
   TokenBoard:

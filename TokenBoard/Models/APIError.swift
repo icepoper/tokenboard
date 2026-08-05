@@ -13,17 +13,17 @@ enum APIError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .networkError(let error):
-            return "网络错误: \(error.localizedDescription)"
+            return String(localized: "网络错误: \(error.localizedDescription)")
         case .httpError(let code):
-            return "HTTP 错误: \(code)"
+            return String(localized: "HTTP 错误: \(code)")
         case .parseError(let msg):
-            return "解析错误: \(msg)"
+            return String(localized: "解析错误: \(msg)")
         case .authExpired:
-            return "登录已过期，请重新粘贴 Cookie"
+            return String(localized: "登录已过期，请重新粘贴 Cookie")
         case .credentialMissing:
-            return "凭证未配置"
+            return String(localized: "凭证未配置")
         case .timeout:
-            return "请求超时"
+            return String(localized: "请求超时")
         case .unknown(let msg):
             return msg
         }

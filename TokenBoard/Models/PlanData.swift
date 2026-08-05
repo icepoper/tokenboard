@@ -19,7 +19,7 @@ struct SubscriptionInfo {
     }
 
     var statusDisplayName: String {
-        status == "VALID" ? "生效中" : "已过期"
+        status == "VALID" ? String(localized: "生效中") : String(localized: "已过期")
     }
 
     var endDateString: String {
@@ -113,7 +113,7 @@ struct PlanData {
     /// 格式化倒计时
     static func formatCountdown(to date: Date) -> String {
         let interval = date.timeIntervalSinceNow
-        guard interval > 0 else { return "已重置" }
+        guard interval > 0 else { return String(localized: "已重置") }
 
         let hours = Int(interval) / 3600
         let minutes = (Int(interval) % 3600) / 60
@@ -121,11 +121,11 @@ struct PlanData {
         if hours > 24 {
             let days = hours / 24
             let remainHours = hours % 24
-            return "\(days)天\(remainHours)小时"
+            return String(localized: "\(days)天\(remainHours)小时")
         } else if hours > 0 {
-            return "\(hours)小时\(minutes)分钟"
+            return String(localized: "\(hours)小时\(minutes)分钟")
         } else {
-            return "\(minutes)分钟"
+            return String(localized: "\(minutes)分钟")
         }
     }
 }

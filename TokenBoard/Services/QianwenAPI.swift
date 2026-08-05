@@ -89,7 +89,7 @@ actor QianwenAPI {
               let status = responseData.status,
               let remainingDays = responseData.remainingDays,
               let endTimeTs = responseData.endTime else {
-            throw APIError.parseError("subscription 响应字段缺失")
+            throw APIError.parseError(String(localized: "subscription 响应字段缺失"))
         }
 
         return SubscriptionInfo(
@@ -119,7 +119,7 @@ actor QianwenAPI {
         guard let p5h = responseData.per5HourPercentage,
               let p1w = responseData.per1WeekPercentage,
               let p1wReset = responseData.per1WeekResetTime else {
-            throw APIError.parseError("usage 响应字段缺失")
+            throw APIError.parseError(String(localized: "usage 响应字段缺失"))
         }
 
         // per5HourResetTime 可能缺失（5h 无消耗时 API 不返回该字段）
@@ -157,7 +157,7 @@ actor QianwenAPI {
         }
 
         guard let t = tier else {
-            throw APIError.parseError("quota-config 中未找到 \(specCode) 等级")
+            throw APIError.parseError(String(localized: "quota-config 中未找到 \(specCode) 等级"))
         }
 
         return QuotaConfig(
@@ -296,7 +296,7 @@ actor QianwenAPI {
     /// 校验 HTTP 响应
     private func validateHTTPResponse(_ response: URLResponse) throws {
         guard let http = response as? HTTPURLResponse else {
-            throw APIError.unknown("非 HTTP 响应")
+            throw APIError.unknown(String(localized: "非 HTTP 响应"))
         }
         if http.statusCode == 401 || http.statusCode == 403 {
             throw APIError.authExpired
@@ -323,7 +323,7 @@ actor QianwenAPI {
     static func extractInnerData(from json: [String: Any]?) throws -> Any {
         guard let outerData = json?["data"] as? [String: Any],
               let dataV2 = outerData["DataV2"] as? [String: Any] else {
-            throw APIError.parseError("响应缺少 DataV2 结构")
+            throw APIError.parseError(String(localized: "响应缺少 DataV2 结构"))
         }
 
         // 检查认证错误
@@ -334,7 +334,7 @@ actor QianwenAPI {
         }
 
         guard let innerWrapper = dataV2["data"] as? [String: Any] else {
-            throw APIError.parseError("响应缺少 data 层")
+            throw APIError.parseError(String(localized: "响应缺少 data 层"))
         }
 
         let codeOK = (innerWrapper["code"] as? String) == "SUCCESS"
@@ -343,11 +343,11 @@ actor QianwenAPI {
 
         guard codeOK || successOK || retOK else {
             let errorMsg = outerData["errorMsg"] as? String ?? ""
-            throw APIError.parseError(errorMsg.isEmpty ? "接口返回失败状态" : errorMsg)
+            throw APIError.parseError(errorMsg.isEmpty ? String(localized: "接口返回失败状态") : errorMsg)
         }
 
         guard let innerData = innerWrapper["data"] else {
-            throw APIError.parseError("响应缺少数据体")
+            throw APIError.parseError(String(localized: "响应缺少数据体"))
         }
         return innerData
     }

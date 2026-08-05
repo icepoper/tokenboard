@@ -58,9 +58,9 @@ struct QuotaBar: View {
 
     private var resetDetailText: String {
         if resetTimeString == "--:--" {
-            return "已重置"
+            return String(localized: "已重置")
         }
-        return "重置时间 \(resetTimeString) · 还剩\(resetCountdown)"
+        return String(localized: "重置时间 \(resetTimeString) · 还剩\(resetCountdown)")
     }
 
     private var remainingColor: Color {

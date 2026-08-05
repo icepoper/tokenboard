@@ -17,11 +17,12 @@ struct SettingsView: View {
 
     private var notificationStatusText: String {
         switch notificationStatus {
-        case "未请求": return "未请求（点重新请求授权）"
-        case "已拒绝": return "已拒绝（需在系统设置开启）"
-        case "已授权": return "已授权 ✓"
-        case "临时授权": return "已授权 ✓"
-        default: return notificationStatus.isEmpty ? "未请求" : notificationStatus
+        case "未请求": return String(localized: "未请求（点重新请求授权）")
+        case "已拒绝": return String(localized: "已拒绝（需在系统设置开启）")
+        case "已授权", "临时授权": return String(localized: "已授权 ✓")
+        case "会话授权": return String(localized: "会话授权")
+        case "未知": return String(localized: "未知")
+        default: return notificationStatus.isEmpty ? String(localized: "未请求") : notificationStatus
         }
     }
 

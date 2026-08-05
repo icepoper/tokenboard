@@ -39,7 +39,7 @@ final class PollingServiceTests: XCTestCase {
 
     /// describe 应保留 APIError 的用户文案
     func testDescribeAPIError() {
-        XCTAssertEqual(PollingService.describe(APIError.authExpired), "登录已过期，请重新粘贴 Cookie")
+        XCTAssertEqual(PollingService.describe(APIError.authExpired), String(localized: "登录已过期，请重新粘贴 Cookie"))
         XCTAssertTrue(PollingService.describe(APIError.httpError(statusCode: 500)).contains("500"))
     }
 }

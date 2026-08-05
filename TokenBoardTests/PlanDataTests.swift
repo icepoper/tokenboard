@@ -6,22 +6,22 @@ final class PlanDataTests: XCTestCase {
 
     func testCountdownPastDateShowsReset() {
         let past = Date().addingTimeInterval(-60)
-        XCTAssertEqual(PlanData.formatCountdown(to: past), "已重置")
+        XCTAssertEqual(PlanData.formatCountdown(to: past), String(localized: "已重置"))
     }
 
     func testCountdownMinutes() {
         let t = Date().addingTimeInterval(30 * 60 + 30)
-        XCTAssertEqual(PlanData.formatCountdown(to: t), "30分钟")
+        XCTAssertEqual(PlanData.formatCountdown(to: t), String(localized: "\(30)分钟"))
     }
 
     func testCountdownHoursAndMinutes() {
         let t = Date().addingTimeInterval(4 * 3600 + 50 * 60 + 30)
-        XCTAssertEqual(PlanData.formatCountdown(to: t), "4小时50分钟")
+        XCTAssertEqual(PlanData.formatCountdown(to: t), String(localized: "\(4)小时\(50)分钟"))
     }
 
     func testCountdownDays() {
         let t = Date().addingTimeInterval(2 * 24 * 3600 + 3 * 3600 + 30)
-        XCTAssertEqual(PlanData.formatCountdown(to: t), "2天3小时")
+        XCTAssertEqual(PlanData.formatCountdown(to: t), String(localized: "\(2)天\(3)小时"))
     }
 
     func testRemainingCount() {
