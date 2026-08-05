@@ -1,5 +1,7 @@
 # 更新日志
 
+[English](CHANGELOG.en.md) | [简体中文](CHANGELOG.md)
+
 本文件记录 TokenBoard 的版本更新内容，是 GitHub Releases 发布说明的源文件（格式参照 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)）。
 
 ## [Unreleased]

@@ -74,7 +74,7 @@ This project reads data through **unofficial Qwen workbench APIs** for personal 
 
 ## Changelog
 
-[CHANGELOG.md](CHANGELOG.md)
+[CHANGELOG.en.md](CHANGELOG.en.md)
 
 ## License
 
