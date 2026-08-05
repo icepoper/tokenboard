@@ -72,6 +72,10 @@ TokenBoard/
 
 本项目通过**逆向千问工作台内部 API** 获取数据，仅供个人学习使用。接口可能随时变更，作者不对数据准确性负责。请遵守阿里云服务条款，合理使用。
 
+## 更新日志
+
+[CHANGELOG.md](CHANGELOG.md)
+
 ## License
 
 [MIT](LICENSE)

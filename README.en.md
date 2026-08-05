@@ -72,6 +72,10 @@ TokenBoard/
 
 This project reads data through **unofficial Qwen workbench APIs** for personal learning only. APIs may change at any time; the author is not responsible for data accuracy. Please comply with Alibaba Cloud's terms of service.
 
+## Changelog
+
+[CHANGELOG.md](CHANGELOG.md)
+
 ## License
 
 [MIT](LICENSE)
