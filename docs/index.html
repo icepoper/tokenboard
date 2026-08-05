@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" id="root-html">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TokenBoard — 千问 Token Plan 菜单栏额度监控</title>
-<meta name="description" content="TokenBoard：macOS 菜单栏轻量工具，实时显示千问 Token Plan 5 小时 / 7 天剩余额度与最近 7 天用量趋势。">
+<title id="pageTitle">TokenBoard — 千问 Token Plan 菜单栏额度监控</title>
+<meta name="description" id="metaDesc" content="TokenBoard：macOS 菜单栏轻量工具，实时显示千问 Token Plan 5 小时 / 7 天剩余额度与最近 7 天用量趋势。">
 <link rel="icon" type="image/png" href="app-icon.png">
 <style>
   :root{
@@ -188,48 +188,49 @@
   <div class="wrap nav-in">
     <a class="brand" href="#"><img src="app-icon.png" alt="TokenBoard 图标">TokenBoard</a>
     <nav class="nav-links" aria-label="页面导航">
-      <a href="#features">功能</a>
-      <a href="#screenshot">截图</a>
-      <a href="#install">安装</a>
+      <a href="#features" data-i18n="nav.features">功能</a>
+      <a href="#screenshot" data-i18n="nav.screenshot">截图</a>
+      <a href="#install" data-i18n="nav.install">安装</a>
     </nav>
-    <a class="btn btn-primary btn-sm" style="margin-left:auto" href="https://github.com/icepoper/tokenboard/releases/latest/download/TokenBoard-0.1.3-universal.dmg">下载 v0.1.3</a>
+    <button class="btn btn-ghost btn-sm" id="langToggle" type="button" aria-label="Switch language">EN</button>
+    <a class="btn btn-primary btn-sm" style="margin-left:auto" href="https://github.com/icepoper/tokenboard/releases/latest/download/TokenBoard-0.1.3-universal.dmg"><span data-i18n="nav.download">下载 v0.1.3</span></a>
   </div>
 </header>
 
 <main>
   <!-- ============ HERO ============ -->
   <section class="hero wrap">
-    <span class="badge"><span class="dot"></span>v0.1.3 · macOS 13+ · Universal 二进制</span>
-    <h1>把千问额度<br><span class="grad">装进菜单栏</span></h1>
-    <p class="sub">TokenBoard 是一款轻量 macOS 菜单栏工具，实时显示千问 Token Plan 的 5 小时 / 7 天剩余额度与最近 7 天用量趋势，额度告急第一时间通知你。</p>
+    <span class="badge"><span class="dot"></span><span data-i18n="hero.badge">v0.1.3 · macOS 13+ · Universal 二进制</span></span>
+    <h1 data-i18n-html="hero.title">把千问额度<br><span class="grad">装进菜单栏</span></h1>
+    <p class="sub" data-i18n="hero.sub">TokenBoard 是一款轻量 macOS 菜单栏工具，实时显示千问 Token Plan 的 5 小时 / 7 天剩余额度与最近 7 天用量趋势，额度告急第一时间通知你。</p>
     <div class="cta">
       <a class="btn btn-primary" href="https://github.com/icepoper/tokenboard/releases/latest/download/TokenBoard-0.1.3-universal.dmg">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        下载 v0.1.3（Universal DMG）
+        <span data-i18n="hero.ctaDownload">下载 v0.1.3（Universal DMG）</span>
       </a>
       <a class="btn btn-ghost" href="https://github.com/icepoper/tokenboard">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.66.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
-        GitHub 仓库
+        <span data-i18n="hero.ctaGithub">GitHub 仓库</span>
       </a>
     </div>
     <div class="stats">
-      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>零第三方依赖</span>
-      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>SwiftUI 原生</span>
-      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Apple Silicon / Intel</span>
-      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>MIT 开源</span>
+      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="chip.zeroDep">零第三方依赖</span></span>
+      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="chip.native">SwiftUI 原生</span></span>
+      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="chip.silicon">Apple Silicon / Intel</span></span>
+      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="chip.mit">MIT 开源</span></span>
     </div>
 
     <div class="menubar reveal" role="img" aria-label="macOS 菜单栏模拟：右侧显示 TokenBoard 胶囊 QW 82% | 64%">
       <div class="mb-l">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c-.03-2.89 2.36-4.27 2.47-4.34-1.35-1.97-3.44-2.24-4.18-2.27-1.78-.18-3.47 1.05-4.37 1.05-.9 0-2.29-1.02-3.77-1-1.94.03-3.72 1.13-4.72 2.86-2.01 3.49-.51 8.66 1.45 11.49.96 1.39 2.1 2.94 3.6 2.88 1.45-.06 2-.94 3.74-.94s2.24.94 3.77.91c1.56-.03 2.55-1.41 3.5-2.8 1.1-1.61 1.55-3.17 1.58-3.25-.03-.02-3.04-1.17-3.07-4.59ZM14.16 4.06c.8-.97 1.34-2.32 1.19-3.66-1.15.05-2.55.77-3.38 1.74-.74.86-1.39 2.23-1.22 3.55 1.29.1 2.6-.66 3.41-1.63Z"/></svg>
         <b>TokenBoard</b>
-        <span class="mb-muted">文件</span><span class="mb-muted">编辑</span><span class="mb-muted">显示</span>
+        <span class="mb-muted" data-i18n="menubar.file">文件</span><span class="mb-muted" data-i18n="menubar.edit">编辑</span><span class="mb-muted" data-i18n="menubar.view">显示</span>
       </div>
       <div class="mb-r">
         <span class="capsule">QW&nbsp;<span class="p1">82%</span><span class="sep">|</span><span class="p2">64%</span></span>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
         <svg width="16" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="11" x2="23" y2="13"/><rect x="3" y="8" width="12" height="8" rx="1" fill="currentColor" stroke="none"/></svg>
-        <span class="mb-muted">周二 19:30</span>
+        <span class="mb-muted" data-i18n="menubar.time">周二 19:30</span>
       </div>
     </div>
   </section>
@@ -238,14 +239,14 @@
   <section id="features" class="wrap">
     <div class="sec-head reveal">
       <span class="overline">Features</span>
-      <h2>小而美，只为额度可见</h2>
-      <p class="sec-sub">不打断工作流，所有关键信息都安静地待在菜单栏里。</p>
+      <h2 data-i18n="feat.heading">小而美，只为额度可见</h2>
+      <p class="sec-sub" data-i18n="feat.sub">不打断工作流，所有关键信息都安静地待在菜单栏里。</p>
     </div>
     <div class="bento">
       <div class="card span2 reveal">
         <div class="icon-chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="8.5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="15.5" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></div>
-        <h3>双百分比胶囊</h3>
-        <p>菜单栏胶囊同时显示两个周期的剩余百分比 —— 第一个是 5 小时窗口，第二个是 7 天窗口，哪个先告急一目了然。胶囊背景色还可自定义。</p>
+        <h3 data-i18n="feat.capsule">双百分比胶囊</h3>
+        <p data-i18n="feat.capsuleDesc">菜单栏胶囊同时显示两个周期的剩余百分比 —— 第一个是 5 小时窗口，第二个是 7 天窗口，哪个先告急一目了然。胶囊背景色还可自定义。</p>
         <div class="demo-capsule">
           <span class="capsule">QW&nbsp;<span class="p1">82%</span><span class="sep">|</span><span class="p2">64%</span></span>
           <div class="swatches" aria-label="胶囊背景色可自定义">
@@ -256,8 +257,8 @@
 
       <div class="card reveal">
         <div class="icon-chip v2"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="10"/></svg></div>
-        <h3>最近 7 天用量趋势</h3>
-        <p>按天堆叠展示输入 / 缓存 / 输出 Token，点击查看单日总量与缓存命中率。</p>
+        <h3 data-i18n="feat.trend">最近 7 天用量趋势</h3>
+        <p data-i18n="feat.trendDesc">按天堆叠展示输入 / 缓存 / 输出 Token，点击查看单日总量与缓存命中率。</p>
         <div class="bars" role="img" aria-label="最近 7 天用量堆叠柱状图示例">
           <div class="bar"><i class="s3" style="height:6%"></i><i class="s2" style="height:10%"></i><i class="s1" style="height:4%"></i></div>
           <div class="bar"><i class="s3" style="height:10%"></i><i class="s2" style="height:16%"></i><i class="s1" style="height:10%"></i></div>
@@ -267,58 +268,58 @@
           <div class="bar"><i class="s3" style="height:2%"></i><i class="s2" style="height:3%"></i><i class="s1" style="height:2%"></i></div>
           <div class="bar"><i class="s3" style="height:20%"></i><i class="s2" style="height:30%"></i><i class="s1" style="height:26%"></i></div>
         </div>
-        <div class="bar-labels"><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span><span>一</span><span>二</span></div>
+        <div class="bar-labels"><span data-i18n="weekday.wed">三</span><span data-i18n="weekday.thu">四</span><span data-i18n="weekday.fri">五</span><span data-i18n="weekday.sat">六</span><span data-i18n="weekday.sun">日</span><span data-i18n="weekday.mon">一</span><span data-i18n="weekday.tue">二</span></div>
         <div class="legend">
-          <span><i style="background:#22D3EE"></i>输入</span>
-          <span><i style="background:#3B82F6"></i>缓存</span>
-          <span><i style="background:#A855F7"></i>输出</span>
+          <span><i style="background:#22D3EE"></i><span data-i18n="legend.input">输入</span></span>
+          <span><i style="background:#3B82F6"></i><span data-i18n="legend.cache">缓存</span></span>
+          <span><i style="background:#A855F7"></i><span data-i18n="legend.output">输出</span></span>
         </div>
       </div>
 
       <div class="card reveal">
         <div class="icon-chip v3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></div>
-        <h3>5h / 7d 滑动窗口</h3>
-        <p>双周期剩余比例、剩余次数与重置倒计时，自动轮询实时刷新。</p>
+        <h3 data-i18n="feat.window">5h / 7d 滑动窗口</h3>
+        <p data-i18n="feat.windowDesc">双周期剩余比例、剩余次数与重置倒计时，自动轮询实时刷新。</p>
         <div class="rings">
           <div class="ring">
             <svg width="92" height="92" viewBox="0 0 92 92" aria-hidden="true">
               <circle class="track" cx="46" cy="46" r="40" fill="none" stroke-width="8"/>
               <circle class="val" cx="46" cy="46" r="40" fill="none" stroke-width="8" stroke="#22D3EE" stroke-dasharray="206 251"/>
             </svg>
-            <b>82%</b><small>5 小时</small>
+            <b>82%</b><small data-i18n="feat.h5">5 小时</small>
           </div>
           <div class="ring">
             <svg width="92" height="92" viewBox="0 0 92 92" aria-hidden="true">
               <circle class="track" cx="46" cy="46" r="40" fill="none" stroke-width="8"/>
               <circle class="val" cx="46" cy="46" r="40" fill="none" stroke-width="8" stroke="#A855F7" stroke-dasharray="161 251"/>
             </svg>
-            <b>64%</b><small>7 天</small>
+            <b>64%</b><small data-i18n="feat.d7">7 天</small>
           </div>
         </div>
       </div>
 
       <div class="card reveal">
         <div class="icon-chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
-        <h3>额度预警</h3>
-        <p>任一周期剩余低于 20%，系统通知第一时间提醒，再也不怕用到一半停摆。</p>
+        <h3 data-i18n="feat.alert">额度预警</h3>
+        <p data-i18n="feat.alertDesc">任一周期剩余低于 20%，系统通知第一时间提醒，再也不怕用到一半停摆。</p>
       </div>
 
       <div class="card reveal">
         <div class="icon-chip v2"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-        <h3>Keychain 安全存储</h3>
-        <p>Cookie 与 sec_token 仅存于 macOS 钥匙串，不上传、不落地明文。</p>
+        <h3 data-i18n="feat.keychain">Keychain 安全存储</h3>
+        <p data-i18n="feat.keychainDesc">Cookie 与 sec_token 仅存于 macOS 钥匙串，不上传、不落地明文。</p>
       </div>
 
       <div class="card span3 reveal">
         <div class="icon-chip v3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
         <div class="txt">
-          <h3>轻量纯原生</h3>
-          <p>SwiftUI 原生实现，零第三方依赖，常驻菜单栏几乎无感占用。</p>
+          <h3 data-i18n="feat.light">轻量纯原生</h3>
+          <p data-i18n="feat.lightDesc">SwiftUI 原生实现，零第三方依赖，常驻菜单栏几乎无感占用。</p>
         </div>
         <div class="chips">
           <span class="chip">SwiftUI</span>
-          <span class="chip">零第三方依赖</span>
-          <span class="chip">Universal 二进制</span>
+          <span class="chip" data-i18n="chip.zeroDep2">零第三方依赖</span>
+          <span class="chip" data-i18n="chip.universal">Universal 二进制</span>
           <span class="chip">macOS 13+</span>
         </div>
       </div>
@@ -329,11 +330,11 @@
   <section id="screenshot" class="wrap">
     <div class="sec-head reveal">
       <span class="overline">Preview</span>
-      <h2>一眼看全额度与趋势</h2>
-      <p class="sec-sub">点击菜单栏图标展开面板：双周期配额、加油包、7 天趋势图尽收眼底。</p>
+      <h2 data-i18n="shot.heading">一眼看全额度与趋势</h2>
+      <p class="sec-sub" data-i18n="shot.sub">点击菜单栏图标展开面板：双周期配额、加油包、7 天趋势图尽收眼底。</p>
     </div>
     <div class="shot-frame reveal">
-      <img src="screenshot-overview.png" alt="TokenBoard 弹出面板截图：显示 5 小时与 7 天剩余额度、加油包与最近 7 天用量趋势图" width="746" height="1268">
+      <img src="screenshot-overview.png" alt="TokenBoard 弹出面板截图：显示 5 小时与 7 天剩余额度、加油包与最近 7 天用量趋势图" width="746" height="1268" data-i18n-alt="shot.alt">
     </div>
   </section>
 
@@ -341,26 +342,26 @@
   <section id="install" class="wrap">
     <div class="sec-head reveal">
       <span class="overline">Setup</span>
-      <h2>三步开始使用</h2>
+      <h2 data-i18n="install.heading">三步开始使用</h2>
     </div>
     <div class="steps">
       <div class="step reveal">
         <div class="num">01</div>
-        <h3>下载安装</h3>
-        <p>从 Releases 下载 Universal DMG，拖入 Applications。首次打开未签名应用时，在「系统设置 → 隐私与安全性」中选择「仍要打开」。</p>
+        <h3 data-i18n="install.step1Title">下载安装</h3>
+        <p data-i18n="install.step1Desc">从 Releases 下载 Universal DMG，拖入 Applications。首次打开未签名应用时，在「系统设置 → 隐私与安全性」中选择「仍要打开」。</p>
       </div>
       <div class="step reveal">
         <div class="num">02</div>
-        <h3>粘贴凭证</h3>
-        <p>在千问 Token Plan 页面按 F12，从 Network 请求中复制 <code style="font-family:ui-monospace,Menlo,monospace;color:var(--cyan)">Cookie</code> 与 <code style="font-family:ui-monospace,Menlo,monospace;color:var(--cyan)">sec_token</code>，粘贴到设置窗口保存。</p>
+        <h3 data-i18n="install.step2Title">粘贴凭证</h3>
+        <p data-i18n-html="install.step2Desc">在千问 Token Plan 页面按 F12，从 Network 请求中复制 <code style="font-family:ui-monospace,Menlo,monospace;color:var(--cyan)">Cookie</code> 与 <code style="font-family:ui-monospace,Menlo,monospace;color:var(--cyan)">sec_token</code>，粘贴到设置窗口保存。</p>
       </div>
       <div class="step reveal">
         <div class="num">03</div>
-        <h3>完成</h3>
-        <p>菜单栏即刻出现双百分比胶囊，自动轮询刷新；点击面板刷新按钮可立即拉取最新数据。</p>
+        <h3 data-i18n="install.step3Title">完成</h3>
+        <p data-i18n="install.step3Desc">菜单栏即刻出现双百分比胶囊，自动轮询刷新；点击面板刷新按钮可立即拉取最新数据。</p>
       </div>
     </div>
-    <p class="note reveal">需要 macOS 13.0 或更高版本 · 遇到问题请到 <a href="https://github.com/icepoper/tokenboard/issues">GitHub Issues</a> 反馈</p>
+    <p class="note reveal" data-i18n-html="install.note">需要 macOS 13.0 或更高版本 · 遇到问题请到 <a href="https://github.com/icepoper/tokenboard/issues">GitHub Issues</a> 反馈</p>
   </section>
 </main>
 
@@ -375,11 +376,134 @@
         <a href="https://github.com/icepoper/tokenboard/issues">Issues</a>
       </div>
     </div>
-    <p class="disclaimer">TokenBoard 为个人学习项目，通过非官方接口获取数据，与阿里云 / 通义千问官方无关；使用请遵守相关服务条款。</p>
+    <p class="disclaimer" data-i18n="footer.disclaimer">TokenBoard 为个人学习项目，通过非官方接口获取数据，与阿里云 / 通义千问官方无关；使用请遵守相关服务条款。</p>
   </div>
 </footer>
 
 <script>
+  /* ================= i18n: 中文 / English ================= */
+  const I18N = {
+    zh: {
+      "meta.title": "TokenBoard — 千问 Token Plan 菜单栏额度监控",
+      "meta.desc": "TokenBoard：macOS 菜单栏轻量工具，实时显示千问 Token Plan 5 小时 / 7 天剩余额度与最近 7 天用量趋势。",
+      "nav.features": "功能", "nav.screenshot": "截图", "nav.install": "安装",
+      "nav.download": "下载 v0.1.3",
+      "hero.badge": "v0.1.3 · macOS 13+ · Universal 二进制",
+      "hero.title": "把千问额度<br><span class=\"grad\">装进菜单栏</span>",
+      "hero.sub": "TokenBoard 是一款轻量 macOS 菜单栏工具，实时显示千问 Token Plan 的 5 小时 / 7 天剩余额度与最近 7 天用量趋势，额度告急第一时间通知你。",
+      "hero.ctaDownload": "下载 v0.1.3（Universal DMG）", "hero.ctaGithub": "GitHub 仓库",
+      "chip.zeroDep": "零第三方依赖", "chip.native": "SwiftUI 原生", "chip.silicon": "Apple Silicon / Intel", "chip.mit": "MIT 开源",
+      "menubar.file": "文件", "menubar.edit": "编辑", "menubar.view": "显示", "menubar.time": "周二 19:30",
+      "feat.heading": "小而美，只为额度可见",
+      "feat.sub": "不打断工作流，所有关键信息都安静地待在菜单栏里。",
+      "feat.capsule": "双百分比胶囊",
+      "feat.capsuleDesc": "菜单栏胶囊同时显示两个周期的剩余百分比 —— 第一个是 5 小时窗口，第二个是 7 天窗口，哪个先告急一目了然。胶囊背景色还可自定义。",
+      "feat.trend": "最近 7 天用量趋势",
+      "feat.trendDesc": "按天堆叠展示输入 / 缓存 / 输出 Token，点击查看单日总量与缓存命中率。",
+      "weekday.sun": "日", "weekday.mon": "一", "weekday.tue": "二", "weekday.wed": "三", "weekday.thu": "四", "weekday.fri": "五", "weekday.sat": "六",
+      "legend.input": "输入", "legend.cache": "缓存", "legend.output": "输出",
+      "feat.window": "5h / 7d 滑动窗口",
+      "feat.windowDesc": "双周期剩余比例、剩余次数与重置倒计时，自动轮询实时刷新。",
+      "feat.h5": "5 小时", "feat.d7": "7 天",
+      "feat.alert": "额度预警",
+      "feat.alertDesc": "任一周期剩余低于 20%，系统通知第一时间提醒，再也不怕用到一半停摆。",
+      "feat.keychain": "Keychain 安全存储",
+      "feat.keychainDesc": "Cookie 与 sec_token 仅存于 macOS 钥匙串，不上传、不落地明文。",
+      "feat.light": "轻量纯原生",
+      "feat.lightDesc": "SwiftUI 原生实现，零第三方依赖，常驻菜单栏几乎无感占用。",
+      "chip.zeroDep2": "零第三方依赖", "chip.universal": "Universal 二进制",
+      "shot.heading": "一眼看全额度与趋势",
+      "shot.sub": "点击菜单栏图标展开面板：双周期配额、加油包、7 天趋势图尽收眼底。",
+      "shot.alt": "TokenBoard 弹出面板截图：显示 5 小时与 7 天剩余额度、加油包与最近 7 天用量趋势图",
+      "install.heading": "三步开始使用",
+      "install.step1Title": "下载安装",
+      "install.step1Desc": "从 Releases 下载 Universal DMG，拖入 Applications。首次打开未签名应用时，在「系统设置 → 隐私与安全性」中选择「仍要打开」。",
+      "install.step2Title": "粘贴凭证",
+      "install.step2Desc": "在千问 Token Plan 页面按 F12，从 Network 请求中复制 <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">Cookie</code> 与 <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">sec_token</code>，粘贴到设置窗口保存。",
+      "install.step3Title": "完成",
+      "install.step3Desc": "菜单栏即刻出现双百分比胶囊，自动轮询刷新；点击面板刷新按钮可立即拉取最新数据。",
+      "install.note": "需要 macOS 13.0 或更高版本 · 遇到问题请到 <a href=\"https://github.com/icepoper/tokenboard/issues\">GitHub Issues</a> 反馈",
+      "footer.disclaimer": "TokenBoard 为个人学习项目，通过非官方接口获取数据，与阿里云 / 通义千问官方无关；使用请遵守相关服务条款。"
+    },
+    en: {
+      "meta.title": "TokenBoard — Qwen Token Plan Menu Bar Quota Monitor",
+      "meta.desc": "TokenBoard: a lightweight macOS menu bar tool that shows your Qwen Token Plan 5-hour / 7-day remaining quota and the last 7 days of usage trends in real time.",
+      "nav.features": "Features", "nav.screenshot": "Screenshot", "nav.install": "Install",
+      "nav.download": "Download v0.1.3",
+      "hero.badge": "v0.1.3 · macOS 13+ · Universal Binary",
+      "hero.title": "Put Qwen quota<br><span class=\"grad\">in your menu bar</span>",
+      "hero.sub": "TokenBoard is a lightweight macOS menu bar tool that shows your Qwen Token Plan 5-hour / 7-day remaining quota and the last 7 days of usage trends in real time, and notifies you the moment your quota runs low.",
+      "hero.ctaDownload": "Download v0.1.3 (Universal DMG)", "hero.ctaGithub": "GitHub Repo",
+      "chip.zeroDep": "Zero third-party deps", "chip.native": "Native SwiftUI", "chip.silicon": "Apple Silicon / Intel", "chip.mit": "MIT Licensed",
+      "menubar.file": "File", "menubar.edit": "Edit", "menubar.view": "View", "menubar.time": "Tue 19:30",
+      "feat.heading": "Small but mighty — quota at a glance",
+      "feat.sub": "No workflow disruption — all the key info quietly lives in your menu bar.",
+      "feat.capsule": "Dual-percentage capsule",
+      "feat.capsuleDesc": "The menu bar capsule shows both windows at once — 5-hour and 7-day remaining percentages — so you can see which one is running low at a glance. The capsule background color is customizable too.",
+      "feat.trend": "Last 7 days usage trend",
+      "feat.trendDesc": "Day-by-day stacked bars for input / cache / output tokens; click to see daily totals and cache hit rate.",
+      "weekday.sun": "Sun", "weekday.mon": "Mon", "weekday.tue": "Tue", "weekday.wed": "Wed", "weekday.thu": "Thu", "weekday.fri": "Fri", "weekday.sat": "Sat",
+      "legend.input": "Input", "legend.cache": "Cache", "legend.output": "Output",
+      "feat.window": "5h / 7d sliding window",
+      "feat.windowDesc": "Remaining ratio, remaining calls and reset countdown for both windows, auto-polled in real time.",
+      "feat.h5": "5 hours", "feat.d7": "7 days",
+      "feat.alert": "Quota alert",
+      "feat.alertDesc": "When either window drops below 20%, you get a system notification right away — no more surprises mid-way.",
+      "feat.keychain": "Keychain-secured storage",
+      "feat.keychainDesc": "Cookie and sec_token live only in the macOS Keychain — never uploaded, never stored in plaintext.",
+      "feat.light": "Lightweight & native",
+      "feat.lightDesc": "Native SwiftUI with zero third-party dependencies — lives in your menu bar with negligible footprint.",
+      "chip.zeroDep2": "Zero third-party deps", "chip.universal": "Universal binary",
+      "shot.heading": "See all quota & trends at a glance",
+      "shot.sub": "Click the menu bar icon to open the panel: dual-window quota, add-on packs and the 7-day trend chart all in one place.",
+      "shot.alt": "TokenBoard popover screenshot: 5-hour and 7-day remaining quota, add-on packs, and last 7 days usage trend chart",
+      "install.heading": "Get started in three steps",
+      "install.step1Title": "Download & install",
+      "install.step1Desc": "Download the Universal DMG from Releases and drag it into Applications. On first launch of the unsigned app, choose \u201cOpen Anyway\u201d in System Settings \u2192 Privacy & Security.",
+      "install.step2Title": "Paste credentials",
+      "install.step2Desc": "On the Qwen Token Plan page, press F12 and copy <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">Cookie</code> and <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">sec_token</code> from a Network request, then paste them into Settings.",
+      "install.step3Title": "Done",
+      "install.step3Desc": "The dual-percentage capsule appears in your menu bar and refreshes automatically; click the refresh button in the panel to pull the latest data instantly.",
+      "install.note": "Requires macOS 13.0 or later \u00b7 Found an issue? Report it on <a href=\"https://github.com/icepoper/tokenboard/issues\">GitHub Issues</a>",
+      "footer.disclaimer": "TokenBoard is a personal learning project that reads data through unofficial APIs; it is not affiliated with Alibaba Cloud / Qwen. Please follow the relevant terms of service."
+    }
+  };
+
+  let lang = localStorage.getItem('tb-lang') || (navigator.language && navigator.language.toLowerCase().startsWith('zh') ? 'zh' : 'en');
+
+  function applyLang() {
+    const dict = I18N[lang] || I18N.zh;
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    const title = document.getElementById('pageTitle');
+    if (title && dict['meta.title']) title.textContent = dict['meta.title'];
+    const meta = document.getElementById('metaDesc');
+    if (meta && dict['meta.desc']) meta.setAttribute('content', dict['meta.desc']);
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.getAttribute('data-i18n');
+      if (dict[k] != null) el.textContent = dict[k];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const k = el.getAttribute('data-i18n-html');
+      if (dict[k] != null) el.innerHTML = dict[k];
+    });
+    document.querySelectorAll('[data-i18n-alt]').forEach(el => {
+      const k = el.getAttribute('data-i18n-alt');
+      if (dict[k] != null) el.setAttribute('alt', dict[k]);
+    });
+    const toggle = document.getElementById('langToggle');
+    if (toggle) toggle.textContent = lang === 'zh' ? 'EN' : '中文';
+  }
+
+  const toggleBtn = document.getElementById('langToggle');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      lang = lang === 'zh' ? 'en' : 'zh';
+      localStorage.setItem('tb-lang', lang);
+      applyLang();
+    });
+  }
+  applyLang();
+
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const els = document.querySelectorAll('.reveal');
   if (reduced || !('IntersectionObserver' in window)) {

@@ -1,5 +1,7 @@
 # TokenBoard
 
+[English](README.en.md) | [简体中文](README.md)
+
 macOS 菜单栏实时监控**千问（Qwen）Token Plan** 额度消耗的轻量工具。5 小时 / 7 天滑动窗口的剩余额度一眼可见。
 
 ![菜单栏胶囊 + 弹出面板](docs/screenshot-overview.png)
