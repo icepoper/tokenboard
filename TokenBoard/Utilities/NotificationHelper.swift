@@ -85,6 +85,16 @@ final class NotificationHelper {
         }
     }
 
+#if DEBUG
+    /// 发送测试通知（用于验证通知通道与图标，仅 Debug 构建）
+    func sendTestNotification() {
+        sendNotification(
+            title: "TokenBoard 测试通知",
+            body: "通知通道工作正常，此处应显示最新应用图标。"
+        )
+    }
+#endif
+
     private func sendNotification(title: String, body: String) {
         let content = UNMutableNotificationContent()
         content.title = title

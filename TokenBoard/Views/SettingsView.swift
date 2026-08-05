@@ -178,6 +178,15 @@ struct SettingsView: View {
                         .buttonStyle(.bordered)
                         .controlSize(.small)
                         .disabled(notificationStatus == "已授权" || notificationStatus == "临时授权")
+
+#if DEBUG
+                        Button("发送测试通知") {
+                            NotificationHelper.shared.sendTestNotification()
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                        .disabled(notificationStatus != "已授权" && notificationStatus != "临时授权")
+#endif
                     }
                 }
                 .padding(8)
@@ -186,7 +195,7 @@ struct SettingsView: View {
             // MARK: 关于
             GroupBox {
                 HStack {
-                    Text("TokenBoard v0.1.0")
+                    Text("TokenBoard v\(appVersion)")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                     Spacer()
@@ -221,6 +230,13 @@ struct SettingsView: View {
                 notificationStatus = NotificationHelper.shared.statusDescription
             }
         }
+    }
+
+    private var appVersion: String {
+        let info = Bundle.main.infoDictionary
+        let v = info?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+        let b = info?["CFBundleVersion"] as? String ?? ""
+        return b.isEmpty ? v : "\(v) (\(b))"
     }
 
     // MARK: - 状态标记
