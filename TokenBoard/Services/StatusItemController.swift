@@ -9,23 +9,20 @@ final class StatusItemController: NSObject {
     private var popover: NSPopover!
     private var cancellables = Set<AnyCancellable>()
 
-    private let polling = PollingService.shared
-    private let credentials = CredentialManager.shared
+    private let providers = ProviderManager.shared
     private let settings = AppSettings.shared
 
     // MARK: - 启动
 
     func setup() {
-        // 状态栏项：宽度按最宽内容（QW 100%）测量，避免过宽留白
+        // 状态栏项：宽度按最宽内容测量，避免过宽留白
         let width = Self.idealItemWidth()
         statusItem = NSStatusBar.system.statusItem(withLength: width)
         guard let button = statusItem.button else { return }
 
         // NSHostingView 承载菜单栏标签（标准 SwiftUI 渲染，@Published 变化自动更新）
         let label = MenuBarLabel()
-            .environmentObject(polling)
-            .environmentObject(credentials)
-            .environmentObject(settings)
+            .environmentObject(providers)
 
         let hosting = NSHostingView(rootView: label)
         hosting.frame = NSRect(x: 0, y: 0, width: width, height: 22)
@@ -42,16 +39,15 @@ final class StatusItemController: NSObject {
         popover.behavior = .transient
         popover.contentViewController = NSHostingController(
             rootView: PopoverView()
-                .environmentObject(polling)
-                .environmentObject(credentials)
-                .environmentObject(settings)
+                .environmentObject(providers)
         )
     }
 
-    /// 用最宽可能内容（"QW 100% | 100%"）测量状态项宽度，数值变化时宽度不跳动
+    /// 用各服务商最宽可能内容测量状态项宽度，数值变化时宽度不跳动
     private static func idealItemWidth() -> CGFloat {
-        let probe = NSHostingView(rootView: ProgressRing(progress: 1, text: "100% | 100%"))
-        return ceil(probe.fittingSize.width)
+        let qw = NSHostingView(rootView: ProgressRing(progress: 1, text: "100% | 100%"))
+        let ds = NSHostingView(rootView: ProgressRing(progress: 1, text: "¥1000.00", prefix: "DS"))
+        return ceil(max(qw.fittingSize.width, ds.fittingSize.width))
     }
 
     // MARK: - 弹出面板

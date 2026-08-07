@@ -8,6 +8,21 @@ This file records TokenBoard's release history and is the source of truth for th
 
 (none)
 
+## [0.2.0] - 2026-08-07
+
+### Added
+
+- **Multi-provider architecture**: provider abstraction + ProviderManager; menu bar / popover / settings support switching between Qianwen and DeepSeek, persisted.
+- **DeepSeek monitoring**: platform-session auth (userToken, stored in Keychain), real-time balance (paid / granted / total), today & month tokens / cost / request counts.
+- **Official-logo provider switcher**: one-click switching between Qianwen and DeepSeek using their official logos in the popover and settings.
+- **7-day per-model token trend charts**: one chart per model that produced calls, with automatic cross-month merge at month starts.
+- **Low-balance notifications**: system notification when balance drops below 20 CNY; can re-notify after balance recovers above the threshold.
+- **Dev experience**: switched to a stable self-signed signing certificate so Keychain authorization is granted once and never prompts per build again.
+
+### Quality
+
+- 56/56 unit tests passing (new DeepSeek parsing & multi-provider tests)
+
 ## [0.1.5] - 2026-08-07
 
 ### Fixed

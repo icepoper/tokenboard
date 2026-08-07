@@ -59,5 +59,6 @@ enum KeychainHelper {
     enum Keys {
         static let cookie = "qianwen_cookie"
         static let secToken = "qianwen_sec_token"
+        static let deepSeekUserToken = "deepseek_user_token"
     }
 }

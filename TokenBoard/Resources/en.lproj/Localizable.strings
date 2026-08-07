@@ -105,3 +105,36 @@
 "重启后语言设置立即生效。" = "The new language takes effect after restart.";
 "立即重启" = "Restart Now";
 "稍后" = "Later";
+
+
+// MARK: DeepSeek 监控（v0.2.0）
+"账户余额" = "Account Balance";
+"可用" = "Available";
+"不可用" = "Unavailable";
+"充值" = "Paid";
+"赠金" = "Granted";
+"余额不足，请前往 DeepSeek 平台充值" = "Insufficient balance, please top up on the DeepSeek platform";
+"用量" = "Usage";
+"今日 tokens" = "Today tokens";
+"本月 tokens" = "This month tokens";
+"今日消费" = "Today cost";
+"本月消费" = "This month cost";
+"主要模型" = "Top model";
+"近 7 天各模型 Token 趋势" = "7-day token trend by model";
+"近 7 天暂无调用" = "No usage in the last 7 days";
+"7 天合计" = "7-day total";
+"请在设置中粘贴 DeepSeek userToken" = "Paste the DeepSeek userToken in Settings";
+"服务商" = "Provider";
+"切换服务商后，下方凭证与菜单栏监控内容随之切换" = "Switching providers changes the credential form and the menu bar content";
+"凭证配置（千问）" = "Credentials (Qianwen)";
+"凭证配置（DeepSeek）" = "Credentials (DeepSeek)";
+"从浏览器登录 platform.deepseek.com 后获取 userToken（注意不是 API Key）：DevTools → Application → Local Storage → https://platform.deepseek.com → 复制 userToken 字段值" = "Get the userToken after signing in at platform.deepseek.com: DevTools → Application → Local Storage → https://platform.deepseek.com → copy the userToken value";
+"粘贴 userToken" = "Paste userToken";
+"DeepSeek 余额不足" = "DeepSeek balance low";
+"当前余额 %@%@，低于 %lld 元，请及时充值" = "Current balance %@%@, below %lld CNY, please top up";
+"获取 userToken 步骤" = "How to get the userToken";
+"1. 用 Chrome 登录 platform.deepseek.com" = "1. Sign in to platform.deepseek.com in Chrome";
+"2. 按 Cmd+Option+I 打开 DevTools → Console" = "2. Press Cmd+Option+I → Console tab";
+"3. 输入 localStorage.getItem('userToken') 并回车" = "3. Run: localStorage.getItem('userToken')";
+"4. 复制输出的 value 字段（长串字符，不是 sk- 开头的 API Key）" = "4. Copy the value field from the output (a long string, NOT the sk- API key)";
+"点击图标切换服务商，下方凭证与菜单栏监控内容随之切换" = "Click a logo to switch providers; the credential form and menu bar content follow";

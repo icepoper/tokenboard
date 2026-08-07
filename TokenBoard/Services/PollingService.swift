@@ -47,7 +47,7 @@ final class PollingService: ObservableObject {
     /// 是否处于持续失败状态（UI 据此展示错误提示）
     var isFailing: Bool { tracker.isFailing }
 
-    weak var credentialManager: CredentialManager?
+    weak var credentialManager: QianwenCredentialStore?
 
     init(api: QianwenAPI = QianwenAPI()) {
         self.api = api
@@ -208,6 +208,8 @@ final class PollingService: ObservableObject {
         lastUpdated = Date()
         lastError = nil
         tracker.recordSuccess()
+        // 成功拉取说明凭证有效，若此前标记过期则恢复
+        credentialManager?.validate()
     }
 
     /// 错误描述：APIError 用中文用户文案，其余保留系统原始信息（英文，便于排查）

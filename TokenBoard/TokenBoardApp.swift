@@ -20,12 +20,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             await NotificationHelper.shared.requestPermission()
         }
 
-        // 凭证完整则立即启动轮询
-        let credentials = CredentialManager.shared
-        let polling = PollingService.shared
-        polling.credentialManager = credentials
-        if credentials.status == .complete {
-            polling.start()
+        // 凭证完整则立即启动活动服务商轮询
+        let providers = ProviderManager.shared
+        let active = providers.activeProvider
+        if active.credentialStatus == .complete {
+            active.start()
         }
     }
 }
@@ -35,16 +34,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 struct TokenBoardApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
-    @StateObject private var credentials = CredentialManager.shared
-    @StateObject private var polling = PollingService.shared
+    @StateObject private var providers = ProviderManager.shared
     @StateObject private var settings = AppSettings.shared
 
     var body: some Scene {
         // 独立设置窗口（macOS 13+ 官方 WindowGroup 方案）
         WindowGroup("设置", id: "settings") {
             SettingsView()
-                .environmentObject(polling)
-                .environmentObject(credentials)
+                .environmentObject(providers)
                 .environmentObject(settings)
         }
         .windowResizability(.contentSize)

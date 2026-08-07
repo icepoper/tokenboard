@@ -3,17 +3,20 @@ import ServiceManagement
 
 /// 设置窗口
 struct SettingsView: View {
-    @EnvironmentObject var polling: PollingService
-    @EnvironmentObject var credentials: CredentialManager
+    @EnvironmentObject var providers: ProviderManager
     @EnvironmentObject var settings: AppSettings
 
     @State private var cookieInput = ""
     @State private var secTokenInput = ""
+    @State private var userTokenInput = ""
     @State private var showSaved = false
     @State private var launchAtLogin = false
     @State private var notificationStatus = ""
 
     private let intervalOptions = [15, 30, 60, 120, 300]
+
+    /// 活动服务商
+    private var provider: any Provider { providers.activeProvider }
 
     private var notificationStatusText: String {
         switch notificationStatus {
@@ -39,64 +42,25 @@ struct SettingsView: View {
             Text("设置")
                 .font(.system(size: 16, weight: .bold))
 
-            // MARK: 凭证区
+            // MARK: 服务商选择
             GroupBox {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("凭证配置")
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("服务商")
                         .font(.system(size: 13, weight: .semibold))
 
-                    Text("从浏览器 DevTools 复制 Cookie 和 sec_token")
+                    ProviderSwitcher()
+
+                    Text("点击图标切换服务商，下方凭证与菜单栏监控内容随之切换")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Cookie")
-                            .font(.system(size: 11, weight: .medium))
-                        TextEditor(text: $cookieInput)
-                            .font(.system(size: 11, design: .monospaced))
-                            .frame(height: 80)
-                            .border(Color.secondary.opacity(0.3), width: 1)
-                            .cornerRadius(4)
-                    }
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("sec_token")
-                            .font(.system(size: 11, weight: .medium))
-                        TextField("粘贴 sec_token", text: $secTokenInput)
-                            .textFieldStyle(.roundedBorder)
-                            .font(.system(size: 11, design: .monospaced))
-                    }
-
-                    HStack {
-                        Button("保存") {
-                            saveCredentials()
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.small)
-                        .disabled(cookieInput.isEmpty || secTokenInput.isEmpty)
-
-                        Button("清除") {
-                            clearCredentials()
-                        }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
-
-                        Spacer()
-
-                        if showSaved {
-                            Text("已保存")
-                                .font(.system(size: 11))
-                                .foregroundColor(.green)
-                                .transition(.opacity)
-                        }
-
-                        statusBadge
-                    }
                 }
                 .padding(8)
             }
 
-            // MARK: 轮询设置
+            // MARK: 凭证区（按活动服务商区分）
+            credentialGroupBox
+
+    // MARK: 轮询设置
             GroupBox {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("轮询设置")
@@ -107,8 +71,8 @@ struct SettingsView: View {
                             .font(.system(size: 12))
                         Spacer()
                         Picker("", selection: Binding(
-                            get: { polling.pollingInterval },
-                            set: { polling.pollingInterval = $0 }
+                            get: { provider.pollingInterval },
+                            set: { provider.pollingInterval = $0 }
                         )) {
                             ForEach(intervalOptions, id: \.self) { interval in
                                 Text("\(interval) 秒").tag(interval)
@@ -229,7 +193,7 @@ struct SettingsView: View {
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text("macOS 菜单栏千问 Token Plan 监控")
+                    Text("macOS 菜单栏千问 / DeepSeek 监控")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                 }
@@ -262,6 +226,107 @@ struct SettingsView: View {
         }
     }
 
+            /// 凭证区：按活动服务商渲染对应表单
+    private var credentialGroupBox: some View {
+        GroupBox {
+            switch provider.id {
+            case .qianwen:
+                qianwenCredentialForm
+            case .deepseek:
+                deepseekCredentialForm
+            }
+        }
+    }
+
+    private var qianwenCredentialForm: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("凭证配置（千问）")
+                .font(.system(size: 13, weight: .semibold))
+
+            Text("从浏览器 DevTools 复制 Cookie 和 sec_token")
+                .font(.system(size: 11))
+                .foregroundColor(.secondary)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Cookie")
+                    .font(.system(size: 11, weight: .medium))
+                TextEditor(text: $cookieInput)
+                    .font(.system(size: 11, design: .monospaced))
+                    .frame(height: 80)
+                    .border(Color.secondary.opacity(0.3), width: 1)
+                    .cornerRadius(4)
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("sec_token")
+                    .font(.system(size: 11, weight: .medium))
+                TextField("粘贴 sec_token", text: $secTokenInput)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: 11, design: .monospaced))
+            }
+
+            credentialActionRow(disabled: cookieInput.isEmpty || secTokenInput.isEmpty)
+        }
+        .padding(8)
+    }
+
+    private var deepseekCredentialForm: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("凭证配置（DeepSeek）")
+                .font(.system(size: 13, weight: .semibold))
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("获取 userToken 步骤")
+                    .font(.system(size: 11, weight: .medium))
+                Text("1. 用 Chrome 登录 platform.deepseek.com")
+                Text("2. 按 Cmd+Option+I 打开 DevTools → Console")
+                Text("3. 输入 localStorage.getItem('userToken') 并回车")
+                Text("4. 复制输出的 value 字段（长串字符，不是 sk- 开头的 API Key）")
+            }
+            .font(.system(size: 11))
+            .foregroundColor(.secondary)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("userToken")
+                    .font(.system(size: 11, weight: .medium))
+                TextField("粘贴 userToken", text: $userTokenInput)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: 11, design: .monospaced))
+            }
+
+            credentialActionRow(disabled: userTokenInput.isEmpty)
+        }
+        .padding(8)
+    }
+
+    private func credentialActionRow(disabled: Bool) -> some View {
+        HStack {
+            Button("保存") {
+                saveCredentials()
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.small)
+            .disabled(disabled)
+
+            Button("清除") {
+                clearCredentials()
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+
+            Spacer()
+
+            if showSaved {
+                Text("已保存")
+                    .font(.system(size: 11))
+                    .foregroundColor(.green)
+                    .transition(.opacity)
+            }
+
+            statusBadge
+        }
+    }
+
     private var appVersion: String {
         let info = Bundle.main.infoDictionary
         let v = info?["CFBundleShortVersionString"] as? String ?? "0.0.0"
@@ -273,7 +338,7 @@ struct SettingsView: View {
 
     private var statusBadge: some View {
         Group {
-            switch credentials.status {
+            switch provider.credentialStatus {
             case .complete:
                 Text("已配置")
                     .font(.system(size: 10))
@@ -305,19 +370,29 @@ struct SettingsView: View {
     // MARK: - 操作
 
     private func saveCredentials() {
-        credentials.save(cookie: cookieInput, secToken: secTokenInput)
-        cookieInput = ""
-        secTokenInput = ""
+        switch provider.id {
+        case .qianwen:
+            QianwenProvider.shared.saveCredential(cookie: cookieInput, secToken: secTokenInput)
+            cookieInput = ""
+        case .deepseek:
+            DeepSeekProvider.shared.saveCredential(userToken: userTokenInput)
+            userTokenInput = ""
+        }
         withAnimation { showSaved = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             withAnimation { showSaved = false }
         }
-        polling.restartIfNeeded()
+        provider.restartIfNeeded()
     }
 
     private func clearCredentials() {
-        credentials.clear()
-        polling.stop()
+        switch provider.id {
+        case .qianwen:
+            QianwenProvider.shared.clearCredential()
+        case .deepseek:
+            DeepSeekProvider.shared.clearCredential()
+        }
+        provider.stop()
     }
 
     private func setLaunchAtLogin(_ enabled: Bool) {

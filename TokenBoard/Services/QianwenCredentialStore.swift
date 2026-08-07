@@ -1,18 +1,11 @@
 import Foundation
 import Combine
 
-/// 凭证状态
-enum CredentialStatus {
-    case complete       // Cookie + sec_token 都有
-    case incomplete     // 缺少某一项
-    case expired        // API 返回认证失败
-}
-
-/// 凭证管理器
+/// 千问凭证管理：Cookie + sec_token，Keychain 安全存储
 @MainActor
-final class CredentialManager: ObservableObject {
+final class QianwenCredentialStore: CredentialStoring, ObservableObject {
     /// 全局单例
-    static let shared = CredentialManager()
+    static let shared = QianwenCredentialStore()
 
     @Published var status: CredentialStatus = .incomplete
 

@@ -11,6 +11,12 @@ final class NotificationHelper {
     private var notified5hWindow: TimeInterval = 0
     private var notified7dWindow: TimeInterval = 0
 
+    /// 低余额通知阈值（元）
+    private let lowBalanceThreshold: Double = 20
+
+    /// 低余额是否已通知（余额回升到阈值上后重置）
+    private var notifiedLowBalance = false
+
     /// 当前权限状态（供 UI 显示）
     var authorizationStatus: UNAuthorizationStatus = .notDetermined
 
@@ -48,6 +54,25 @@ final class NotificationHelper {
         case .provisional: return "临时授权"
         case .ephemeral: return "会话授权"
         @unknown default: return "未知"
+        }
+    }
+
+    /// 检查 DeepSeek 余额并发送低余额预警（余额回升到阈值上后再跌破可再次通知）
+    func checkAndNotifyDeepSeek(balance: DeepSeekBalance) {
+        guard authorizationStatus == .authorized || authorizationStatus == .provisional else { return }
+
+        if balance.totalBalance < lowBalanceThreshold {
+            if !notifiedLowBalance {
+                let symbol = balance.currency.uppercased() == "CNY" ? "¥" : "$"
+                let amount = String(format: "%.2f", balance.totalBalance)
+                sendNotification(
+                    title: String(localized: "DeepSeek 余额不足"),
+                    body: String(localized: "当前余额 \(symbol)\(amount)，低于 \(Int(lowBalanceThreshold)) 元，请及时充值")
+                )
+                notifiedLowBalance = true
+            }
+        } else {
+            notifiedLowBalance = false
         }
     }
 

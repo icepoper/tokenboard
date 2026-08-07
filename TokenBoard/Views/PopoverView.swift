@@ -1,35 +1,24 @@
 import SwiftUI
 import AppKit
 
-/// 弹出面板主视图
+/// 弹出面板主视图：展示活动服务商的监控数据
 struct PopoverView: View {
-    @EnvironmentObject var polling: PollingService
-    @EnvironmentObject var credentials: CredentialManager
+    @EnvironmentObject var providers: ProviderManager
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             headerSection
 
-            if polling.isFailing || polling.state == .error {
+            providerSwitcher
+
+            if provider.isFailing || provider.state == .error {
                 errorBanner
             }
 
             Divider()
 
-            if credentials.status == .incomplete || credentials.status == .expired {
-                credentialWarning
-            } else if let data = polling.planData {
-                subscriptionSection(data.subscription)
-                Divider()
-                quotaSection(data)
-                Divider()
-                addonSection(data.resetCards)
-                Divider()
-                trendSection
-            } else {
-                loadingSection
-            }
+            providerContent
 
             Divider()
 
@@ -39,18 +28,73 @@ struct PopoverView: View {
         .frame(width: 340)
     }
 
+    // MARK: - 活动服务商
+
+    private var provider: any Provider { providers.activeProvider }
+
     // MARK: - 标题
 
     private var headerSection: some View {
         HStack {
-            Text("Token Plan")
+            Text(headerTitle)
                 .font(.system(size: 14, weight: .bold))
             Spacer()
-            if let lastUpdated = polling.lastUpdated {
+            if let lastUpdated = provider.lastUpdated {
                 Text("更新于 \(Self.timeFormatter.string(from: lastUpdated))")
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
             }
+        }
+    }
+
+    private var headerTitle: String {
+        switch provider.id {
+        case .qianwen: return "Token Plan"
+        case .deepseek: return "DeepSeek"
+        }
+    }
+
+
+    // MARK: - 服务商切换
+
+    private var providerSwitcher: some View {
+        HStack {
+            Spacer()
+            ProviderSwitcher()
+            Spacer()
+        }
+    }
+
+    // MARK: - 内容区（按活动服务商快照分发）
+
+    @ViewBuilder
+    private var providerContent: some View {
+        switch provider.credentialStatus {
+        case .incomplete, .expired:
+            credentialWarning
+        case .complete:
+            if let snapshot = provider.snapshot {
+                switch snapshot {
+                case .qianwen(let s):
+                    qianwenContent(s)
+                case .deepseek(let s):
+                    DeepSeekPanel(snapshot: s)
+                }
+            } else {
+                loadingSection
+            }
+        }
+    }
+
+    private func qianwenContent(_ s: QianwenSnapshot) -> some View {
+        Group {
+            subscriptionSection(s.planData.subscription)
+            Divider()
+            quotaSection(s.planData)
+            Divider()
+            addonSection(s.planData.resetCards)
+            Divider()
+            trendSection(trend: s.trend, errorMessage: s.trendError)
         }
     }
 
@@ -73,7 +117,7 @@ struct PopoverView: View {
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.orange)
             }
-            if let msg = polling.lastError {
+            if let msg = provider.lastError {
                 Text(msg)
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
@@ -93,16 +137,16 @@ struct PopoverView: View {
 
     private var credentialWarning: some View {
         VStack(spacing: 8) {
-            Image(systemName: credentials.status == .expired
+            Image(systemName: provider.credentialStatus == .expired
                   ? "exclamationmark.triangle.fill"
                   : "key.fill")
                 .font(.system(size: 28))
                 .foregroundColor(.orange)
-            Text(credentials.status == .expired
+            Text(provider.credentialStatus == .expired
                  ? "登录已过期"
                  : "尚未配置凭证")
                 .font(.system(size: 13, weight: .medium))
-            Text("请在设置中粘贴 Cookie 和 sec_token")
+            Text(credentialHint)
                 .font(.system(size: 11))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -114,6 +158,14 @@ struct PopoverView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
+    }
+
+    /// 凭证提示文案（按服务商区分）
+    private var credentialHint: String {
+        switch provider.id {
+        case .qianwen: return String(localized: "请在设置中粘贴 Cookie 和 sec_token")
+        case .deepseek: return String(localized: "请在设置中粘贴 DeepSeek userToken")
+        }
     }
 
     // MARK: - 套餐信息
@@ -170,8 +222,8 @@ struct PopoverView: View {
 
     // MARK: - 用量趋势
 
-    private var trendSection: some View {
-        TrendChartView(trend: polling.trend, errorMessage: polling.trendError)
+    private func trendSection(trend: UsageTrend?, errorMessage: String?) -> some View {
+        TrendChartView(trend: trend, errorMessage: errorMessage)
     }
 
     // MARK: - 加油包
@@ -227,18 +279,18 @@ struct PopoverView: View {
     private var actionButtons: some View {
         HStack(spacing: 12) {
             Button {
-                Task { await polling.refresh() }
+                Task { await provider.refresh() }
             } label: {
                 HStack(spacing: 4) {
-                    Image(systemName: polling.state == .refreshing
+                    Image(systemName: provider.state == .refreshing
                           ? "arrow.triangle.2.circlepath"
                           : "arrow.clockwise")
-                    Text(polling.state == .refreshing ? "刷新中" : "刷新")
+                    Text(provider.state == .refreshing ? String(localized: "刷新中") : String(localized: "刷新"))
                 }
                 .font(.system(size: 11))
             }
             .buttonStyle(.borderless)
-            .disabled(polling.state == .refreshing)
+            .disabled(provider.state == .refreshing)
 
             Spacer()
 
@@ -251,7 +303,7 @@ struct PopoverView: View {
             .buttonStyle(.borderless)
 
             Button {
-                if let url = URL(string: "https://platform.qianwenai.com/home/billing/subscription/token-plan-individual") {
+                if let url = URL(string: consoleURL) {
                     NSWorkspace.shared.open(url)
                 }
             } label: {
@@ -259,7 +311,7 @@ struct PopoverView: View {
                     .font(.system(size: 12))
             }
             .buttonStyle(.borderless)
-            .help("打开千问工作台")
+            .help(consoleURL)
 
             Divider()
                 .frame(height: 12)
@@ -274,6 +326,16 @@ struct PopoverView: View {
             }
             .buttonStyle(.borderless)
             .help("退出 TokenBoard")
+        }
+    }
+
+    /// 服务商控制台地址（供外链按钮使用）
+    private var consoleURL: String {
+        switch provider.id {
+        case .qianwen:
+            return "https://platform.qianwenai.com/home/billing/subscription/token-plan-individual"
+        case .deepseek:
+            return "https://platform.deepseek.com/usage"
         }
     }
 }
