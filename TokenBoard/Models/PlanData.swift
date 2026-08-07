@@ -32,13 +32,17 @@ struct SubscriptionInfo {
 // MARK: - 实时用量
 
 struct UsageInfo {
-    let per5HourPercentage: Double   // 0.0 - 1.0，已用比例
-    let per5HourResetTime: Date?    // 字段可能缺失（5h 无消耗时 API 不返回）
-    let per1WeekPercentage: Double
-    let per1WeekResetTime: Date
+    /// 5h 窗口已用比例（0.0 - 1.0）；API 可能不返回（无消耗 / 新账号），nil = 未知
+    let per5HourPercentage: Double?
+    /// 5h 重置时间；字段可能缺失
+    let per5HourResetTime: Date?
+    /// 7d 窗口已用比例（0.0 - 1.0）；可能缺失
+    let per1WeekPercentage: Double?
+    /// 7d 重置时间；可能缺失
+    let per1WeekResetTime: Date?
 
-    var per5HourRemaining: Double { 1.0 - per5HourPercentage }
-    var per1WeekRemaining: Double { 1.0 - per1WeekPercentage }
+    var per5HourRemaining: Double? { per5HourPercentage.map { 1.0 - $0 } }
+    var per1WeekRemaining: Double? { per1WeekPercentage.map { 1.0 - $0 } }
 }
 
 // MARK: - 配额配置
@@ -64,14 +68,16 @@ struct PlanData {
     let quota: QuotaConfig
     let resetCards: [ResetCard]
 
-    /// 5h 剩余次数
-    var fiveHourRemainingCount: Int {
-        Int(usage.per5HourRemaining * quota.fiveHour)
+    /// 5h 剩余次数（用量未知时为 nil）
+    var fiveHourRemainingCount: Int? {
+        guard let remaining = usage.per5HourRemaining else { return nil }
+        return Int(remaining * quota.fiveHour)
     }
 
-    /// 7d 剩余次数
-    var weeklyRemainingCount: Int {
-        Int(usage.per1WeekRemaining * quota.weekly)
+    /// 7d 剩余次数（用量未知时为 nil）
+    var weeklyRemainingCount: Int? {
+        guard let remaining = usage.per1WeekRemaining else { return nil }
+        return Int(remaining * quota.weekly)
     }
 
     /// 5h 重置倒计时文字
@@ -80,9 +86,10 @@ struct PlanData {
         return Self.formatCountdown(to: t)
     }
 
-    /// 7d 重置倒计时文字
+    /// 7d 重置倒计时文字（未知时显示 --）
     var weeklyResetCountdown: String {
-        Self.formatCountdown(to: usage.per1WeekResetTime)
+        guard let t = usage.per1WeekResetTime else { return "--" }
+        return Self.formatCountdown(to: t)
     }
 
     /// 5h 重置时间 (HH:mm)
@@ -93,21 +100,25 @@ struct PlanData {
         return formatter.string(from: t)
     }
 
-    /// 7d 重置时间 (MM-dd HH:mm)
+    /// 7d 重置时间 (MM-dd HH:mm)；未知时显示 --
     var weeklyResetTimeString: String {
+        guard let t = usage.per1WeekResetTime else { return "--" }
         let formatter = DateFormatter()
         formatter.dateFormat = "MM-dd HH:mm"
-        return formatter.string(from: usage.per1WeekResetTime)
+        return formatter.string(from: t)
     }
 
-    /// 最紧张的剩余百分比（用于菜单栏显示）
+    /// 最紧张的剩余百分比（用于菜单栏显示）；两个窗口都未知时按 1（满额）显示
     var minRemainingPercentage: Double {
-        min(usage.per5HourRemaining, usage.per1WeekRemaining)
+        let remainings = [usage.per5HourRemaining, usage.per1WeekRemaining].compactMap { $0 }
+        return remainings.min() ?? 1
     }
 
-    /// 菜单栏胶囊文案：5h 剩余 | 7d 剩余
+    /// 菜单栏胶囊文案：5h 剩余 | 7d 剩余（未知窗口显示 --）
     var remainingPercentText: String {
-        "\(Int(usage.per5HourRemaining * 100))% | \(Int(usage.per1WeekRemaining * 100))%"
+        let p5h = usage.per5HourRemaining.map { "\(Int($0 * 100))%" } ?? "--"
+        let p1w = usage.per1WeekRemaining.map { "\(Int($0 * 100))%" } ?? "--"
+        return "\(p5h) | \(p1w)"
     }
 
     /// 格式化倒计时

@@ -133,3 +133,56 @@ extension QianwenAPITests {
         }
     }
 }
+
+// MARK: - usage 响应宽松解析测试（v0.1.5：接口可能只返回部分字段）
+
+extension QianwenAPITests {
+
+    /// 稀疏响应：只有 per1WeekPercentage（当前线上实际返回形态），不应报错
+    func testMakeUsageInfoSparseWeeklyOnly() throws {
+        let data = UsageResponseData(
+            per5HourPercentage: nil,
+            per5HourResetTime: nil,
+            per1WeekPercentage: 0.0,
+            per1WeekResetTime: nil
+        )
+        let usage = try QianwenAPI.makeUsageInfo(from: data)
+        XCTAssertEqual(usage.per5HourPercentage, nil)
+        XCTAssertEqual(usage.per5HourResetTime, nil)
+        XCTAssertEqual(usage.per1WeekPercentage, 0.0)
+        XCTAssertEqual(usage.per1WeekResetTime, nil)
+        XCTAssertEqual(usage.per1WeekRemaining, 1.0)
+        XCTAssertNil(usage.per5HourRemaining)
+    }
+
+    /// 完整响应：所有字段正常映射
+    func testMakeUsageInfoFullData() throws {
+        let data = UsageResponseData(
+            per5HourPercentage: 0.0009973083333333333,
+            per5HourResetTime: 1784813220000,
+            per1WeekPercentage: 0.0003014725,
+            per1WeekResetTime: 1785234900000
+        )
+        let usage = try QianwenAPI.makeUsageInfo(from: data)
+        XCTAssertEqual(usage.per5HourPercentage ?? -1, 0.0009973083333333333, accuracy: 1e-12)
+        XCTAssertEqual(usage.per5HourResetTime?.timeIntervalSince1970 ?? -1, 1784813220, accuracy: 1e-6)
+        XCTAssertEqual(usage.per1WeekPercentage ?? -1, 0.0003014725, accuracy: 1e-12)
+        XCTAssertEqual(usage.per1WeekResetTime?.timeIntervalSince1970 ?? -1, 1785234900, accuracy: 1e-6)
+    }
+
+    /// 两个窗口百分比都缺失：视为解析失败
+    func testMakeUsageInfoThrowsWhenAllMissing() {
+        let data = UsageResponseData(
+            per5HourPercentage: nil,
+            per5HourResetTime: nil,
+            per1WeekPercentage: nil,
+            per1WeekResetTime: nil
+        )
+        XCTAssertThrowsError(try QianwenAPI.makeUsageInfo(from: data)) { error in
+            guard case APIError.parseError(let msg) = error else {
+                return XCTFail("应抛 parseError，实际 \(error)")
+            }
+            XCTAssertFalse(msg.isEmpty)
+        }
+    }
+}

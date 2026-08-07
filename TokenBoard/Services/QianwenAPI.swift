@@ -116,20 +116,20 @@ actor QianwenAPI {
             secToken: secToken
         )
 
-        guard let p5h = responseData.per5HourPercentage,
-              let p1w = responseData.per1WeekPercentage,
-              let p1wReset = responseData.per1WeekResetTime else {
+        return try Self.makeUsageInfo(from: responseData)
+    }
+
+    /// 构造 UsageInfo：usage 接口可能只返回部分字段（无消耗的窗口不返回百分比 / 重置时间），
+    /// 缺失字段按未知（nil）处理，仅当两个窗口的百分比都缺失时才视为解析失败。
+    static func makeUsageInfo(from data: UsageResponseData) throws -> UsageInfo {
+        guard data.per5HourPercentage != nil || data.per1WeekPercentage != nil else {
             throw APIError.parseError(String(localized: "usage 响应字段缺失"))
         }
-
-        // per5HourResetTime 可能缺失（5h 无消耗时 API 不返回该字段）
-        let p5hReset: Date? = responseData.per5HourResetTime.map { Date(timeIntervalSince1970: $0 / 1000) }
-
         return UsageInfo(
-            per5HourPercentage: p5h,
-            per5HourResetTime: p5hReset,
-            per1WeekPercentage: p1w,
-            per1WeekResetTime: Date(timeIntervalSince1970: p1wReset / 1000)
+            per5HourPercentage: data.per5HourPercentage,
+            per5HourResetTime: data.per5HourResetTime.map { Date(timeIntervalSince1970: $0 / 1000) },
+            per1WeekPercentage: data.per1WeekPercentage,
+            per1WeekResetTime: data.per1WeekResetTime.map { Date(timeIntervalSince1970: $0 / 1000) }
         )
     }
 

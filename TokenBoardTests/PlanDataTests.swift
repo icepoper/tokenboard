@@ -38,8 +38,8 @@ final class PlanDataTests: XCTestCase {
             quota: quota,
             resetCards: []
         )
-        XCTAssertEqual(data.fiveHourRemainingCount, 1500)
-        XCTAssertEqual(data.weeklyRemainingCount, 7500)
+        XCTAssertEqual(data.fiveHourRemainingCount ?? -1, 1500)
+        XCTAssertEqual(data.weeklyRemainingCount ?? -1, 7500)
         XCTAssertEqual(data.minRemainingPercentage, 0.5)
         XCTAssertEqual(data.remainingPercentText, "50% | 75%")
     }
@@ -58,5 +58,49 @@ final class PlanDataTests: XCTestCase {
             resetCards: []
         )
         XCTAssertEqual(data.remainingPercentText, "100% | 100%")
+    }
+
+    /// 稀疏响应（usage 接口只返回部分字段）：缺失的窗口显示 --，不崩溃
+    func testSparseUsageShowsUnknown() {
+        let usage = UsageInfo(
+            per5HourPercentage: nil,
+            per5HourResetTime: nil,
+            per1WeekPercentage: 0.25,
+            per1WeekResetTime: nil
+        )
+        let data = PlanData(
+            subscription: SubscriptionInfo(specCode: "standard", status: "VALID", remainingDays: 10, endTime: Date(), autoRenewFlag: false),
+            usage: usage,
+            quota: QuotaConfig(fiveHour: 3000, weekly: 10000),
+            resetCards: []
+        )
+        XCTAssertNil(data.fiveHourRemainingCount)
+        XCTAssertEqual(data.weeklyRemainingCount ?? -1, 7500)
+        XCTAssertEqual(data.minRemainingPercentage, 0.75)
+        XCTAssertEqual(data.remainingPercentText, "-- | 75%")
+        XCTAssertEqual(data.fiveHourResetTimeString, "--:--")
+        XCTAssertEqual(data.fiveHourResetCountdown, "--")
+        XCTAssertEqual(data.weeklyResetTimeString, "--")
+        XCTAssertEqual(data.weeklyResetCountdown, "--")
+    }
+
+    /// 两个窗口都未知时：菜单栏按满额显示，文案为 -- | --
+    func testUsageBothUnknown() {
+        let usage = UsageInfo(
+            per5HourPercentage: nil,
+            per5HourResetTime: nil,
+            per1WeekPercentage: nil,
+            per1WeekResetTime: nil
+        )
+        let data = PlanData(
+            subscription: SubscriptionInfo(specCode: "pro", status: "VALID", remainingDays: 30, endTime: Date(), autoRenewFlag: true),
+            usage: usage,
+            quota: QuotaConfig(fiveHour: 3000, weekly: 10000),
+            resetCards: []
+        )
+        XCTAssertNil(data.fiveHourRemainingCount)
+        XCTAssertNil(data.weeklyRemainingCount)
+        XCTAssertEqual(data.minRemainingPercentage, 1)
+        XCTAssertEqual(data.remainingPercentText, "-- | --")
     }
 }

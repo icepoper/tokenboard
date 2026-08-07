@@ -58,11 +58,13 @@ final class NotificationHelper {
 
         let threshold = 0.20  // 20%
 
-        // 5h 限额检查
-        if usage.per5HourRemaining < threshold, let p5hReset = usage.per5HourResetTime {
+        // 5h 限额检查（用量或重置时间缺失时跳过）
+        if let remaining = usage.per5HourRemaining,
+           remaining < threshold,
+           let p5hReset = usage.per5HourResetTime {
             let resetTime = p5hReset.timeIntervalSince1970
             if notified5hWindow != resetTime {
-                let pct = Int(usage.per5HourRemaining * 100)
+                let pct = Int(remaining * 100)
                 sendNotification(
                     title: String(localized: "千问 Token Plan 5h 限额预警"),
                     body: String(localized: "5h 限额仅剩 \(pct)%，重置时间 \(formatTime(p5hReset))")
@@ -71,14 +73,16 @@ final class NotificationHelper {
             }
         }
 
-        // 7d 限额检查
-        if usage.per1WeekRemaining < threshold {
-            let resetTime = usage.per1WeekResetTime.timeIntervalSince1970
+        // 7d 限额检查（用量或重置时间缺失时跳过）
+        if let remaining = usage.per1WeekRemaining,
+           remaining < threshold,
+           let p1wReset = usage.per1WeekResetTime {
+            let resetTime = p1wReset.timeIntervalSince1970
             if notified7dWindow != resetTime {
-                let pct = Int(usage.per1WeekRemaining * 100)
+                let pct = Int(remaining * 100)
                 sendNotification(
                     title: String(localized: "千问 Token Plan 7d 限额预警"),
-                    body: String(localized: "7d 限额仅剩 \(pct)%，重置时间 \(formatTime(usage.per1WeekResetTime))")
+                    body: String(localized: "7d 限额仅剩 \(pct)%，重置时间 \(formatTime(p1wReset))")
                 )
                 notified7dWindow = resetTime
             }
