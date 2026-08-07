@@ -20,7 +20,7 @@ A lightweight macOS menu bar tool that monitors your **Qwen Token Plan** quota c
 
 ## Installation
 
-Download `TokenBoard-0.1.4-universal.dmg` from [Releases](https://github.com/icepoper/tokenboard/releases):
+Download `TokenBoard-0.1.5-universal.dmg` from [Releases](https://github.com/icepoper/tokenboard/releases):
 
 1. Open the DMG and drag TokenBoard into Applications
 2. **First launch** (unsigned app): right-click the app -> **Open**, or go to System Settings -> Privacy & Security -> **Open Anyway**

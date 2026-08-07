@@ -8,6 +8,17 @@ This file records TokenBoard's release history and is the source of truth for th
 
 (none)
 
+## [0.1.5] - 2026-08-07
+
+### Fixed
+
+- **Sparse usage response compatibility**: the Qwen usage API may return only a subset of fields for windows with no consumption (observed: only `per1WeekPercentage`), which previously caused a false "usage response fields missing" error and the "data update failed" banner. Missing fields are now shown as unknown (`--`) instead of failing.
+- Missing 5h/7d reset times now display `--`, and quota warnings are skipped when data is missing.
+
+### Quality
+
+- 36/36 unit tests passing (new sparse-response parsing tests added)
+
 ## [0.1.4] - 2026-08-05
 
 ### Added
