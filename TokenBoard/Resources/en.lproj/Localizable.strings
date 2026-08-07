@@ -31,6 +31,7 @@
 "剩余 %@ / 共 %@ 次" = "Remaining %@ / %@ total";
 "剩余 %lld 天 · 到期 %@" = "Remaining %lld days · Expires %@";
 "剩余 %lld%%" = "Remaining %lld%%";
+"剩余 --%" = "Remaining --%";
 "加油包" = "Add-on packs";
 "加载中..." = "Loading...";
 "千问 Token Plan 5h 限额预警" = "Qwen Token Plan 5h limit alert";
