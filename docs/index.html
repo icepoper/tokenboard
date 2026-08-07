@@ -129,6 +129,10 @@
   /* ---------- screenshot ---------- */
   .shot-frame{max-width:520px;margin:0 auto;border-radius:26px;padding:10px;border:1px solid transparent;background:linear-gradient(var(--bg-soft),var(--bg-soft)) padding-box,var(--grad) border-box;box-shadow:0 30px 90px rgba(2,6,17,.7),0 0 60px rgba(59,130,246,.18)}
   .shot-frame img{border-radius:18px}
+.shot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;max-width:840px;margin:0 auto}
+.shot-frame figcaption{text-align:center;color:var(--muted);font-size:13px;margin-bottom:10px}
+.shot-frame img{width:100%;height:auto}
+@media (max-width:720px){.shot-grid{grid-template-columns:1fr}}
 
   /* ---------- install ---------- */
   .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:step}
@@ -193,20 +197,20 @@
       <a href="#install" data-i18n="nav.install">安装</a>
     </nav>
     <button class="btn btn-ghost btn-sm" id="langToggle" type="button" aria-label="Switch language">EN</button>
-    <a class="btn btn-primary btn-sm" style="margin-left:auto" href="https://github.com/icepoper/tokenboard/releases/latest/download/TokenBoard-0.1.5-universal.dmg"><span data-i18n="nav.download">下载 v0.1.5</span></a>
+    <a class="btn btn-primary btn-sm" style="margin-left:auto" href="https://github.com/icepoper/tokenboard/releases/latest/download/TokenBoard-0.2.0-universal.dmg"><span data-i18n="nav.download">下载 v0.2.0</span></a>
   </div>
 </header>
 
 <main>
   <!-- ============ HERO ============ -->
   <section class="hero wrap">
-    <span class="badge"><span class="dot"></span><span data-i18n="hero.badge">v0.1.5 · macOS 13+ · Universal 二进制</span></span>
+    <span class="badge"><span class="dot"></span><span data-i18n="hero.badge">v0.2.0 · macOS 13+ · Universal 二进制</span></span>
     <h1 data-i18n-html="hero.title">把千问额度<br><span class="grad">装进菜单栏</span></h1>
     <p class="sub" data-i18n="hero.sub">TokenBoard 是一款轻量 macOS 菜单栏工具，实时显示千问 Token Plan 的 5 小时 / 7 天剩余额度与最近 7 天用量趋势，额度告急第一时间通知你。</p>
     <div class="cta">
-      <a class="btn btn-primary" href="https://github.com/icepoper/tokenboard/releases/latest/download/TokenBoard-0.1.5-universal.dmg">
+      <a class="btn btn-primary" href="https://github.com/icepoper/tokenboard/releases/latest/download/TokenBoard-0.2.0-universal.dmg">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span data-i18n="hero.ctaDownload">下载 v0.1.5（Universal DMG）</span>
+        <span data-i18n="hero.ctaDownload">下载 v0.2.0（Universal DMG）</span>
       </a>
       <a class="btn btn-ghost" href="https://github.com/icepoper/tokenboard">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.66.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
@@ -298,9 +302,19 @@
         </div>
       </div>
 
+      <div class="card span2 reveal">
+        <div class="icon-chip v2"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2c3 3 5 6 5 10a5 5 0 0 1-10 0c0-4 2-7 5-10z"/><path d="M12 22v-4"/></svg></div>
+        <h3 data-i18n="feat.deepseek">DeepSeek 余额与用量</h3>
+        <p data-i18n="feat.deepseekDesc">DS 余额胶囊、充值 / 赠金拆分、今日与本月 tokens 与消费；近 7 天各模型 token 趋势，多模型多图。</p>
+        <div class="demo-capsule">
+          <span class="capsule">DS&nbsp;¥20.30</span>
+          <span class="capsule sub">本月消费 ¥159.70</span>
+        </div>
+      </div>
+
       <div class="card reveal">
         <div class="icon-chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
-        <h3 data-i18n="feat.alert">额度预警</h3>
+        <h3 data-i18n="feat.alert">额度 / 余额预警</h3>
         <p data-i18n="feat.alertDesc">任一周期剩余低于 20%，系统通知第一时间提醒，再也不怕用到一半停摆。</p>
       </div>
 
@@ -333,8 +347,15 @@
       <h2 data-i18n="shot.heading">一眼看全额度与趋势</h2>
       <p class="sec-sub" data-i18n="shot.sub">点击菜单栏图标展开面板：双周期配额、加油包、7 天趋势图尽收眼底。</p>
     </div>
-    <div class="shot-frame reveal">
-      <img id="shotImg" src="screenshot-overview.png" alt="TokenBoard 弹出面板截图：显示 5 小时与 7 天剩余额度、加油包与最近 7 天用量趋势图" width="728" height="1286" data-i18n-alt="shot.alt">
+    <div class="shot-grid">
+      <figure class="shot-frame reveal">
+        <figcaption data-i18n="shot.qwen">千问监控面板</figcaption>
+        <img class="shot-img" data-cn="qwen-cn.png" data-en="qwen-en.png" src="qwen-cn.png" alt="千问监控面板截图" data-i18n-alt="shot.altQwen">
+      </figure>
+      <figure class="shot-frame reveal">
+        <figcaption data-i18n="shot.deepseek">DeepSeek 监控面板</figcaption>
+        <img class="shot-img" data-cn="deepseek-cn.png" data-en="deepseek-en.png" src="deepseek-cn.png" alt="DeepSeek 监控面板截图" data-i18n-alt="shot.altDeepseek">
+      </figure>
     </div>
   </section>
 
@@ -387,17 +408,17 @@
       "meta.title": "TokenBoard — 千问 Token Plan 菜单栏额度监控",
       "meta.desc": "TokenBoard：macOS 菜单栏轻量工具，实时显示千问 Token Plan 5 小时 / 7 天剩余额度与最近 7 天用量趋势。",
       "nav.features": "功能", "nav.screenshot": "截图", "nav.install": "安装",
-      "nav.download": "下载 v0.1.5",
-      "hero.badge": "v0.1.5 · macOS 13+ · Universal 二进制",
-      "hero.title": "把千问额度<br><span class=\"grad\">装进菜单栏</span>",
-      "hero.sub": "TokenBoard 是一款轻量 macOS 菜单栏工具，实时显示千问 Token Plan 的 5 小时 / 7 天剩余额度与最近 7 天用量趋势，额度告急第一时间通知你。",
-      "hero.ctaDownload": "下载 v0.1.5（Universal DMG）", "hero.ctaGithub": "GitHub 仓库",
+      "nav.download": "下载 v0.2.0",
+      "hero.badge": "v0.2.0 · macOS 13+ · Universal 二进制",
+      "hero.title": "把千问与 DeepSeek<br><span class=\"grad\">装进菜单栏</span>",
+      "hero.sub": "TokenBoard 是一款轻量 macOS 菜单栏工具，官方 logo 一键切换，实时显示千问 Token Plan 的 5 小时 / 7 天剩余额度与 DeepSeek 余额、用量趋势，额度告急第一时间通知你。",
+      "hero.ctaDownload": "下载 v0.2.0（Universal DMG）", "hero.ctaGithub": "GitHub 仓库",
       "chip.zeroDep": "零第三方依赖", "chip.native": "SwiftUI 原生", "chip.silicon": "Apple Silicon / Intel", "chip.mit": "MIT 开源",
       "menubar.file": "文件", "menubar.edit": "编辑", "menubar.view": "显示", "menubar.time": "周二 19:30",
       "feat.heading": "小而美，只为额度可见",
       "feat.sub": "不打断工作流，所有关键信息都安静地待在菜单栏里。",
-      "feat.capsule": "双百分比胶囊",
-      "feat.capsuleDesc": "菜单栏胶囊同时显示两个周期的剩余百分比 —— 第一个是 5 小时窗口，第二个是 7 天窗口，哪个先告急一目了然。胶囊背景色还可自定义。",
+      "feat.capsule": "多服务商 · 双百分比胶囊",
+      "feat.capsuleDesc": "点击官方 logo 一键切换千问 / DeepSeek。千问胶囊显示 5 小时 / 7 天双周期剩余百分比；DeepSeek 胶囊显示实时余额。胶囊背景色还可自定义。",
       "feat.trend": "最近 7 天用量趋势",
       "feat.trendDesc": "按天堆叠展示输入 / 缓存 / 输出 Token，点击查看单日总量与缓存命中率。",
       "weekday.sun": "日", "weekday.mon": "一", "weekday.tue": "二", "weekday.wed": "三", "weekday.thu": "四", "weekday.fri": "五", "weekday.sat": "六",
@@ -405,41 +426,48 @@
       "feat.window": "5h / 7d 滑动窗口",
       "feat.windowDesc": "双周期剩余比例、剩余次数与重置倒计时，自动轮询实时刷新。",
       "feat.h5": "5 小时", "feat.d7": "7 天",
-      "feat.alert": "额度预警",
-      "feat.alertDesc": "任一周期剩余低于 20%，系统通知第一时间提醒，再也不怕用到一半停摆。",
+      "feat.alert": "额度 / 余额预警",
+      "feat.alertDesc": "千问任一周期剩余低于 20%，或 DeepSeek 余额低于 20 元时，系统通知第一时间提醒，再也不怕用到一半停摆。",
       "feat.keychain": "Keychain 安全存储",
-      "feat.keychainDesc": "Cookie 与 sec_token 仅存于 macOS 钥匙串，不上传、不落地明文。",
+      "feat.keychainDesc": "千问 Cookie / sec_token 与 DeepSeek userToken 仅存于 macOS 钥匙串，不上传、不落地明文。",
       "feat.light": "轻量纯原生",
       "feat.lightDesc": "SwiftUI 原生实现，零第三方依赖，常驻菜单栏几乎无感占用。",
       "chip.zeroDep2": "零第三方依赖", "chip.universal": "Universal 二进制",
-      "shot.heading": "一眼看全额度与趋势",
-      "shot.sub": "点击菜单栏图标展开面板：双周期配额、加油包、7 天趋势图尽收眼底。",
+
+      "feat.deepseek": "DeepSeek 余额与用量",
+      "feat.deepseekDesc": "DS 余额胶囊、充值 / 赠金拆分、今日与本月 tokens 与消费；近 7 天各模型 token 趋势，多模型多图。",
+      "shot.qwen": "千问监控面板",
+      "shot.deepseek": "DeepSeek 监控面板",
+      "shot.altQwen": "千问监控面板截图：双周期额度、加油包与 7 天趋势图",
+      "shot.altDeepseek": "DeepSeek 监控面板截图：余额、用量与按模型趋势图",
+      "shot.heading": "千问与 DeepSeek，一个面板全搞定",
+      "shot.sub": "点击菜单栏图标展开面板：千问双周期配额与趋势、DeepSeek 余额与按模型用量，各取所需。",
       "shot.alt": "TokenBoard 弹出面板截图：显示 5 小时与 7 天剩余额度、加油包与最近 7 天用量趋势图",
       "install.heading": "三步开始使用",
       "install.step1Title": "下载安装",
       "install.step1Desc": "从 Releases 下载 Universal DMG，拖入 Applications。首次打开未签名应用时，在「系统设置 → 隐私与安全性」中选择「仍要打开」。",
       "install.step2Title": "粘贴凭证",
-      "install.step2Desc": "在千问 Token Plan 页面按 F12，从 Network 请求中复制 <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">Cookie</code> 与 <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">sec_token</code>，粘贴到设置窗口保存。",
+      "install.step2Desc": "选择服务商并粘贴对应凭证：千问从 F12 Network 复制 <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">Cookie</code> 与 <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">sec_token</code>；DeepSeek 在 Console 运行 <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">localStorage.getItem('userToken')</code> 并复制 value 字段。",
       "install.step3Title": "完成",
       "install.step3Desc": "菜单栏即刻出现双百分比胶囊，自动轮询刷新；点击面板刷新按钮可立即拉取最新数据。",
       "install.note": "需要 macOS 13.0 或更高版本 · 遇到问题请到 <a href=\"https://github.com/icepoper/tokenboard/issues\">GitHub Issues</a> 反馈",
-      "footer.disclaimer": "TokenBoard 为个人学习项目，通过非官方接口获取数据，与阿里云 / 通义千问官方无关；使用请遵守相关服务条款。"
+      "footer.disclaimer": "TokenBoard 为个人学习项目，通过非官方接口获取数据，与阿里云 / 通义千问 / DeepSeek 官方无关；使用请遵守相关服务条款。"
     },
     en: {
       "meta.title": "TokenBoard — Qwen Token Plan Menu Bar Quota Monitor",
       "meta.desc": "TokenBoard: a lightweight macOS menu bar tool that shows your Qwen Token Plan 5-hour / 7-day remaining quota and the last 7 days of usage trends in real time.",
       "nav.features": "Features", "nav.screenshot": "Screenshot", "nav.install": "Install",
-      "nav.download": "Download v0.1.5",
-      "hero.badge": "v0.1.5 · macOS 13+ · Universal Binary",
-      "hero.title": "Put Qwen quota<br><span class=\"grad\">in your menu bar</span>",
-      "hero.sub": "TokenBoard is a lightweight macOS menu bar tool that shows your Qwen Token Plan 5-hour / 7-day remaining quota and the last 7 days of usage trends in real time, and notifies you the moment your quota runs low.",
-      "hero.ctaDownload": "Download v0.1.5 (Universal DMG)", "hero.ctaGithub": "GitHub Repo",
+      "nav.download": "Download v0.2.0",
+      "hero.badge": "v0.2.0 · macOS 13+ · Universal Binary",
+      "hero.title": "Put Qwen & DeepSeek<br><span class=\"grad\">in your menu bar</span>",
+      "hero.sub": "TokenBoard is a lightweight macOS menu bar tool with one-click official-logo provider switching — it shows your Qwen Token Plan 5-hour / 7-day remaining quota as well as DeepSeek balance and usage trends in real time, and notifies you the moment something runs low.",
+      "hero.ctaDownload": "Download v0.2.0 (Universal DMG)", "hero.ctaGithub": "GitHub Repo",
       "chip.zeroDep": "Zero third-party deps", "chip.native": "Native SwiftUI", "chip.silicon": "Apple Silicon / Intel", "chip.mit": "MIT Licensed",
       "menubar.file": "File", "menubar.edit": "Edit", "menubar.view": "View", "menubar.time": "Tue 19:30",
       "feat.heading": "Small but mighty — quota at a glance",
       "feat.sub": "No workflow disruption — all the key info quietly lives in your menu bar.",
       "feat.capsule": "Dual-percentage capsule",
-      "feat.capsuleDesc": "The menu bar capsule shows both windows at once — 5-hour and 7-day remaining percentages — so you can see which one is running low at a glance. The capsule background color is customizable too.",
+      "feat.capsuleDesc": "Switch between Qianwen and DeepSeek with one click on their official logos. The Qianwen capsule shows 5-hour / 7-day remaining percentages; the DeepSeek capsule shows the live balance. The capsule background color is customizable too.",
       "feat.trend": "Last 7 days usage trend",
       "feat.trendDesc": "Day-by-day stacked bars for input / cache / output tokens; click to see daily totals and cache hit rate.",
       "weekday.sun": "Sun", "weekday.mon": "Mon", "weekday.tue": "Tue", "weekday.wed": "Wed", "weekday.thu": "Thu", "weekday.fri": "Fri", "weekday.sat": "Sat",
@@ -447,25 +475,32 @@
       "feat.window": "5h / 7d sliding window",
       "feat.windowDesc": "Remaining ratio, remaining calls and reset countdown for both windows, auto-polled in real time.",
       "feat.h5": "5 hours", "feat.d7": "7 days",
-      "feat.alert": "Quota alert",
-      "feat.alertDesc": "When either window drops below 20%, you get a system notification right away — no more surprises mid-way.",
+      "feat.alert": "Quota / balance alert",
+      "feat.alertDesc": "Get a system notification the moment a Qianwen window drops below 20% or the DeepSeek balance goes under 20 CNY — no more surprises mid-way.",
       "feat.keychain": "Keychain-secured storage",
-      "feat.keychainDesc": "Cookie and sec_token live only in the macOS Keychain — never uploaded, never stored in plaintext.",
+      "feat.keychainDesc": "Qianwen Cookie / sec_token and the DeepSeek userToken live only in the macOS Keychain — never uploaded, never stored in plaintext.",
       "feat.light": "Lightweight & native",
       "feat.lightDesc": "Native SwiftUI with zero third-party dependencies — lives in your menu bar with negligible footprint.",
       "chip.zeroDep2": "Zero third-party deps", "chip.universal": "Universal binary",
-      "shot.heading": "See all quota & trends at a glance",
-      "shot.sub": "Click the menu bar icon to open the panel: dual-window quota, add-on packs and the 7-day trend chart all in one place.",
+
+      "feat.deepseek": "DeepSeek balance & usage",
+      "feat.deepseekDesc": "DS balance capsule, paid / granted breakdown, today & month tokens and cost, plus 7-day per-model token trends — one chart per model.",
+      "shot.qwen": "Qianwen monitoring panel",
+      "shot.deepseek": "DeepSeek monitoring panel",
+      "shot.altQwen": "Qianwen monitoring panel: dual-window quota, add-on packs and 7-day trend chart",
+      "shot.altDeepseek": "DeepSeek monitoring panel: balance, usage and per-model trend charts",
+      "shot.heading": "Qianwen & DeepSeek, all in one panel",
+      "shot.sub": "Click the menu bar icon to open the panel: Qianwen dual-window quota & trends, plus DeepSeek balance and per-model usage — whatever you need.",
       "shot.alt": "TokenBoard popover screenshot: 5-hour and 7-day remaining quota, add-on packs, and last 7 days usage trend chart",
       "install.heading": "Get started in three steps",
       "install.step1Title": "Download & install",
       "install.step1Desc": "Download the Universal DMG from Releases and drag it into Applications. On first launch of the unsigned app, choose \u201cOpen Anyway\u201d in System Settings \u2192 Privacy & Security.",
       "install.step2Title": "Paste credentials",
-      "install.step2Desc": "On the Qwen Token Plan page, press F12 and copy <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">Cookie</code> and <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">sec_token</code> from a Network request, then paste them into Settings.",
+      "install.step2Desc": "Pick a provider and paste its credentials: for Qianwen, copy <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">Cookie</code> and <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">sec_token</code> from F12 Network; for DeepSeek, run <code style=\"font-family:ui-monospace,Menlo,monospace;color:var(--cyan)\">localStorage.getItem('userToken')</code> in the Console and copy the value field.",
       "install.step3Title": "Done",
       "install.step3Desc": "The dual-percentage capsule appears in your menu bar and refreshes automatically; click the refresh button in the panel to pull the latest data instantly.",
       "install.note": "Requires macOS 13.0 or later \u00b7 Found an issue? Report it on <a href=\"https://github.com/icepoper/tokenboard/issues\">GitHub Issues</a>",
-      "footer.disclaimer": "TokenBoard is a personal learning project that reads data through unofficial APIs; it is not affiliated with Alibaba Cloud / Qwen. Please follow the relevant terms of service."
+      "footer.disclaimer": "TokenBoard is a personal learning project that reads data through unofficial APIs; it is not affiliated with Alibaba Cloud / Qwen / DeepSeek. Please follow the relevant terms of service."
     }
   };
 
@@ -492,8 +527,9 @@
     });
     const toggle = document.getElementById('langToggle');
     if (toggle) toggle.textContent = lang === 'zh' ? 'EN' : '中文';
-    const shot = document.getElementById('shotImg');
-    if (shot) shot.src = lang === 'en' ? 'tokenplan-en.png' : 'screenshot-overview.png';
+    document.querySelectorAll('.shot-img').forEach(img => {
+      img.src = lang === 'en' ? img.dataset.en : img.dataset.cn;
+    });
   }
 
   const toggleBtn = document.getElementById('langToggle');
